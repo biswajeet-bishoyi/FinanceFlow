@@ -69,8 +69,11 @@ export async function signup(formData: FormData) {
     await prisma.pocketMoneyCycle.create({
       data: {
         userId: user.id,
+        label: "Initial Cycle",
         startDate: now,
         endDate: nextMonth,
+        expectedAmount: 0,
+        frequency: "monthly",
         emergencyReserveAmount: 0,
         status: "active",
       }
