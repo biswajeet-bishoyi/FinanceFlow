@@ -26,7 +26,7 @@ export default async function BudgetsPage() {
   });
 
   const formatMoney = (amount: number) => {
-    return (amount / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    return (amount / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
   };
 
   const totalSpent = transactions.reduce((acc, t) => acc + t.amount, 0);

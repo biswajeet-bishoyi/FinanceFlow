@@ -15,7 +15,7 @@ export default async function FriendsPage() {
   });
 
   const formatMoney = (amount: number) => {
-    return (amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+    return (amount / 100).toLocaleString("en-IN", { style: "currency", currency: "INR" });
   };
 
   return (

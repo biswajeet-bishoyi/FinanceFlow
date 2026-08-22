@@ -19,11 +19,11 @@ export function BurnRateChart({ data }: { data: BurnRateData[] }) {
           <p className="font-label-caps text-label-caps text-on-surface-variant mb-2">DAY {label}</p>
           <div className="flex justify-between gap-4 font-body-sm text-body-sm mb-1">
             <span className="text-secondary font-medium">Target</span>
-            <span>${ideal?.toFixed(2) || '0.00'}</span>
+            <span>₹{ideal?.toFixed(2) || '0.00'}</span>
           </div>
           <div className="flex justify-between gap-4 font-body-sm text-body-sm">
             <span className="text-primary font-medium">Actual</span>
-            <span className={actual < ideal ? 'text-error font-bold' : ''}>${actual?.toFixed(2) || '0.00'}</span>
+            <span className={actual < ideal ? 'text-error font-bold' : ''}>₹{actual?.toFixed(2) || '0.00'}</span>
           </div>
         </div>
       );
@@ -52,7 +52,7 @@ export function BurnRateChart({ data }: { data: BurnRateData[] }) {
             axisLine={false} 
             tickLine={false} 
             tick={{ fill: '#76777d', fontSize: 10, fontFamily: 'JetBrains Mono' }}
-            tickFormatter={(val) => `$${Math.round(val / 100)}`}
+            tickFormatter={(val) => `₹${Math.round(val / 100)}`}
           />
           <Tooltip content={<CustomTooltip />} />
           

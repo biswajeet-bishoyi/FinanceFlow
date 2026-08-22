@@ -11,7 +11,7 @@ export default async function GoalsPage() {
   });
 
   const formatMoney = (amount: number) => {
-    return (amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+    return (amount / 100).toLocaleString("en-IN", { style: "currency", currency: "INR" });
   };
 
   return (
@@ -58,7 +58,7 @@ export default async function GoalsPage() {
                 <form action={addContribution} className="mt-2 flex gap-2">
                   <input type="hidden" name="goalId" value={goal.id} />
                   <div className="relative flex-grow">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">₹</span>
                     <input 
                       type="number" 
                       name="amount" 
@@ -99,7 +99,7 @@ export default async function GoalsPage() {
           <div>
             <label className="block font-label-caps text-label-caps text-on-surface-variant mb-2">TARGET AMOUNT</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">₹</span>
               <input 
                 type="number" 
                 name="targetAmount" 

@@ -60,6 +60,31 @@ export async function signup(formData: FormData) {
         { userId: user.id, name: "Bills", icon: "receipt", colorToken: "#7c839b" },
       ]
     });
+
+    // 4. Setup initial zero-rupee cycle
+    const now = new Date();
+    const nextMonth = new Date(now);
+    nextMonth.setMonth(now.getMonth() + 1);
+
+    await prisma.pocketMoneyCycle.create({
+      data: {
+        userId: user.id,
+        startDate: now,
+        endDate: nextMonth,
+        emergencyReserveAmount: 0,
+        status: "active",
+      }
+    });
+
+    // 5. Setup default account
+    await prisma.account.create({
+      data: {
+        userId: user.id,
+        name: "Cash",
+        type: "cash",
+        startingBalance: 0,
+      }
+    });
   }
 
   redirect("/");

@@ -16,7 +16,7 @@ export default async function RecurringPage() {
   });
 
   const formatMoney = (amount: number) => {
-    return (amount / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+    return (amount / 100).toLocaleString("en-IN", { style: "currency", currency: "INR" });
   };
 
   return (
@@ -84,7 +84,7 @@ export default async function RecurringPage() {
           <div>
             <label className="block font-label-caps text-label-caps text-on-surface-variant mb-2">AMOUNT</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">₹</span>
               <input 
                 type="number" 
                 name="amount" 

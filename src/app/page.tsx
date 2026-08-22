@@ -66,14 +66,14 @@ export default async function Home() {
   });
 
   const formatMoney = (amount: number) => {
-    return (amount / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    return (amount / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
   };
 
   const today = new Date();
   const last7DaysData = Array.from({ length: 7 }).map((_, i) => {
     const date = new Date(today);
     date.setDate(date.getDate() - (6 - i));
-    const dayStr = date.toLocaleDateString("en-US", { weekday: "short" });
+    const dayStr = date.toLocaleDateString("en-IN", { weekday: "short" });
     const isToday = i === 6;
 
     const amount = transactions
@@ -148,7 +148,7 @@ export default async function Home() {
         }} className="flex gap-2 mt-2">
           <input type="hidden" name="cycleId" value={cycle.id} />
           <div className="relative flex-grow">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">₹</span>
             <input 
               type="number" 
               name="amount" 

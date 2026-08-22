@@ -140,7 +140,7 @@ export default async function AnalyticsPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="font-body-sm text-body-sm text-on-surface-variant">{Math.round((item.amount / totalSpent) * 100)}%</span>
-                      <span className="font-currency-sm text-currency-sm text-on-surface">${(item.amount / 100).toFixed(2)}</span>
+                      <span className="font-currency-sm text-currency-sm text-on-surface">₹{(item.amount / 100).toFixed(2)}</span>
                     </div>
                   </div>
                 ))}

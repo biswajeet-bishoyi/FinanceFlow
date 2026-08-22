@@ -16,7 +16,7 @@ export function CategoryDonutChart({ data, totalSpent }: { data: CategoryData[],
         <div className="bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
           <span className="font-body-sm text-body-sm font-medium">{payload[0].name}</span>
-          <span className="font-currency-sm text-currency-sm">${amount.toFixed(2)}</span>
+          <span className="font-currency-sm text-currency-sm">₹{amount.toFixed(2)}</span>
         </div>
       );
     }
@@ -24,11 +24,11 @@ export function CategoryDonutChart({ data, totalSpent }: { data: CategoryData[],
   };
 
   return (
-    <div className="w-full h-64 relative">
+    <div className="relative h-64 w-full flex items-center justify-center">
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="font-label-caps text-label-caps text-on-surface-variant">TOTAL SPENT</span>
-        <span className="font-headline-lg text-headline-lg font-bold text-on-surface">
-          ${(totalSpent / 100).toFixed(0)}
+        <span className="font-body-sm text-body-sm text-on-surface-variant">Total</span>
+        <span className="font-headline-lg text-headline-lg text-on-surface font-bold">
+          ₹{(totalSpent / 100).toFixed(0)}
         </span>
       </div>
       <ResponsiveContainer width="100%" height="100%">

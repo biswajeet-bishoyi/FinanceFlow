@@ -26,7 +26,7 @@ export default async function AddExpensePage() {
         <div className="flex flex-col items-center justify-center py-8">
           <span className="font-currency-sm text-currency-sm text-on-surface-variant mb-2 tracking-widest">AMOUNT</span>
           <div className="relative flex items-center justify-center">
-            <span className="absolute left-0 font-display-currency text-display-currency text-on-surface-variant mr-2 opacity-50">$</span>
+            <span className="absolute left-0 font-display-currency text-display-currency text-on-surface-variant mr-2 opacity-50">₹</span>
             <input 
               name="amount"
               className="bg-transparent border-none text-center font-display-currency text-display-currency text-primary w-full focus:ring-0 focus:outline-none placeholder:text-surface-tint pl-8" 
