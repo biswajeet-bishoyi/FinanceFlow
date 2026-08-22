@@ -1,0 +1,306 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    String                 @id @default(uuid())
+  authId                String?                @unique
+  profile               Profile?
+  cycles                PocketMoneyCycle[]
+  incomes               Income[]
+  accounts              Account[]
+  transactions          Transaction[]
+  categories            Category[]
+  categorizationRules   CategorizationRule[]
+  transfers             Transfer[]
+  budgets               Budget[]
+  recurringExpenses     RecurringExpense[]
+  savingsGoals          SavingsGoal[]
+  persons               Person[]
+  lendingRecords        LendingRecord[]
+  notifications         Notification[]
+  insights              Insight[]
+  aiConversations       AIConversation[]
+  receipts              Receipt[]
+  createdAt             DateTime               @default(now())
+}
+
+model Profile {
+  id                     String    @id @default(uuid())
+  userId                 String    @unique
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName            String
+  currency               String    @default("INR")
+  locale                 String    @default("en-IN")
+  personalityMode        String    @default("Friendly") // Calm, Friendly, Brutally Honest
+  appearanceMode         String    @default("system")
+  onboardingCompletedAt  DateTime?
+}
+
+model PocketMoneyCycle {
+  id                      String    @id @default(uuid())
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label                   String
+  startDate               DateTime
+  endDate                 DateTime
+  expectedAmount          Int       // Stored in minor units (e.g. paise)
+  frequency               String    // monthly, weekly, custom
+  status                  String    // active, closed
+  carryForwardAmount      Int       @default(0)
+  emergencyReserveAmount  Int       @default(0)
+  incomes                 Income[]
+  createdAt               DateTime  @default(now())
+  
+  @@index([userId, status])
+}
+
+model Income {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cycleId          String?
+  cycle            PocketMoneyCycle? @relation(fields: [cycleId], references: [id], onDelete: SetNull)
+  amount           Int
+  sourceType       String            // pocket_money, gift, scholarship, freelance, other
+  receivedAt       DateTime
+  note             String?
+  createdAt        DateTime          @default(now())
+}
+
+model Account {
+  id               String         @id @default(uuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  type             String         // cash, bank, upi, debit, credit, wallet, custom
+  startingBalance  Int            @default(0)
+  archivedAt       DateTime?
+  transactions     Transaction[]
+  fromTransfers    Transfer[]     @relation("FromAccount")
+  toTransfers      Transfer[]     @relation("ToAccount")
+}
+
+model Transaction {
+  id                   String            @id @default(uuid())
+  userId               String
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId            String
+  account              Account           @relation(fields: [accountId], references: [id])
+  categoryId           String
+  category             Category          @relation(fields: [categoryId], references: [id])
+  type                 String            // expense, income, refund
+  amount               Int
+  occurredAt           DateTime
+  merchant             String?
+  paymentMethod        String?
+  notes                String?
+  tags                 String[]
+  receiptId            String?           @unique
+  receipt              Receipt?          @relation(fields: [receiptId], references: [id])
+  recurringExpenseId   String?
+  recurringExpense     RecurringExpense? @relation(fields: [recurringExpenseId], references: [id], onDelete: SetNull)
+  transferId           String?
+  transferFrom         Transfer?         @relation("FromTransaction")
+  transferTo           Transfer?         @relation("ToTransaction")
+  splitExpense         SplitExpense?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  deletedAt            DateTime?
+
+  @@index([userId, occurredAt])
+  @@index([userId, categoryId])
+}
+
+model Category {
+  id                   String             @id @default(uuid())
+  userId               String?            // Null if system default
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                 String
+  parentCategoryId     String?
+  parentCategory       Category?          @relation("CategoryToCategory", fields: [parentCategoryId], references: [id], onDelete: SetNull)
+  subcategories        Category[]         @relation("CategoryToCategory")
+  icon                 String
+  colorToken           String
+  isSystemDefault      Boolean            @default(false)
+  transactions         Transaction[]
+  budgets              Budget[]
+  recurringExpenses    RecurringExpense[]
+  categorizationRules  CategorizationRule[]
+}
+
+model CategorizationRule {
+  id                       String      @id @default(uuid())
+  userId                   String
+  user                     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matchPattern             String
+  categoryId               String
+  category                 Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  learnedFromTransactionId String?
+}
+
+model Transfer {
+  id               String        @id @default(uuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromAccountId    String
+  fromAccount      Account       @relation("FromAccount", fields: [fromAccountId], references: [id])
+  toAccountId      String
+  toAccount        Account       @relation("ToAccount", fields: [toAccountId], references: [id])
+  amount           Int
+  occurredAt       DateTime
+  note             String?
+  fromTransactionId String?      @unique
+  toTransactionId   String?      @unique
+  fromTransaction  Transaction?  @relation("FromTransaction", fields: [fromTransactionId], references: [id])
+  toTransaction    Transaction?  @relation("ToTransaction", fields: [toTransactionId], references: [id])
+}
+
+model Budget {
+  id                   String    @id @default(uuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId           String?   // null means overall cycle budget
+  category             Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  period               String    // weekly, cycle
+  amount               Int
+  warningThresholdPct  Int       @default(80)
+  cautionThresholdPct  Int       @default(90)
+}
+
+model RecurringExpense {
+  id               String        @id @default(uuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId       String
+  category         Category      @relation(fields: [categoryId], references: [id])
+  accountId        String
+  label            String
+  amount           Int
+  recurrenceRule   String
+  nextDueAt        DateTime
+  active           Boolean       @default(true)
+  transactions     Transaction[]
+}
+
+model SavingsGoal {
+  id               String             @id @default(uuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  targetAmount     Int
+  currentAmount    Int                @default(0)
+  deadline         DateTime?
+  icon             String?
+  status           String             // active, completed, archived
+  contributions    GoalContribution[]
+}
+
+model GoalContribution {
+  id                  String       @id @default(uuid())
+  goalId              String
+  goal                SavingsGoal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  amount              Int
+  occurredAt          DateTime
+  sourceTransactionId String?
+}
+
+model Person {
+  id               String           @id @default(uuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  avatarColor      String?
+  splitParticipants SplitParticipant[]
+  lendingRecords   LendingRecord[]
+}
+
+model SplitExpense {
+  id               String             @id @default(uuid())
+  transactionId    String             @unique
+  transaction      Transaction        @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  splitMethod      String             // equal, custom
+  totalAmount      Int
+  participants     SplitParticipant[]
+}
+
+model SplitParticipant {
+  id               String          @id @default(uuid())
+  splitExpenseId   String
+  splitExpense     SplitExpense    @relation(fields: [splitExpenseId], references: [id], onDelete: Cascade)
+  personId         String?         // null if it's the current user
+  person           Person?         @relation(fields: [personId], references: [id], onDelete: SetNull)
+  shareAmount      Int
+  settledAt        DateTime?
+  lendingRecords   LendingRecord[]
+}
+
+model LendingRecord {
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId           String
+  person             Person            @relation(fields: [personId], references: [id], onDelete: Cascade)
+  direction          String            // lent, borrowed
+  amount             Int
+  occurredAt         DateTime
+  dueAt              DateTime?
+  note               String?
+  status             String            // open, partially_settled, settled
+  splitParticipantId String?
+  splitParticipant   SplitParticipant? @relation(fields: [splitParticipantId], references: [id], onDelete: SetNull)
+}
+
+model Notification {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type             String
+  payload          String    // Store JSON as String
+  readAt           DateTime?
+  createdAt        DateTime  @default(now())
+}
+
+model Insight {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cycleId          String?
+  type             String
+  payload          String    // Store JSON as String
+  generatedAt      DateTime  @default(now())
+  dismissedAt      DateTime?
+}
+
+model AIConversation {
+  id               String      @id @default(uuid())
+  userId           String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title            String
+  createdAt        DateTime    @default(now())
+  messages         AIMessage[]
+}
+
+model AIMessage {
+  id               String         @id @default(uuid())
+  conversationId   String
+  conversation     AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role             String         // user, assistant, tool
+  content          String
+  toolCalls        String?        // Store JSON as String
+  createdAt        DateTime       @default(now())
+}
+
+model Receipt {
+  id               String       @id @default(uuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl         String
+  extractedPayload String?      // Store JSON as String
+  status           String       // pending, confirmed, discarded
+  transaction      Transaction?
+}
