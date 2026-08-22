@@ -58,8 +58,8 @@ export default async function RootLayout({
                   {displayInitial}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-body-sm text-body-sm text-on-surface font-bold">{displayName}</span>
-                  <span className="font-label-caps text-[10px] text-on-surface-variant max-w-[120px] truncate">{user.email}</span>
+                  <span className="font-body-sm text-body-sm text-on-surface dark:text-surface-bright font-bold">{displayName}</span>
+                  <span className="font-label-caps text-[10px] text-on-surface-variant dark:text-surface-variant max-w-[120px] truncate">{user.email}</span>
                 </div>
               </div>
             ) : (
