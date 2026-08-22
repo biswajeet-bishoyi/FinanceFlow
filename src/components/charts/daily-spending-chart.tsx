@@ -8,22 +8,22 @@ type DailyData = {
   isToday: boolean;
 };
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const amount = data.amount / 100;
+    return (
+      <div className="bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg shadow-lg flex flex-col gap-1 items-center">
+        <span className="font-label-caps text-label-caps opacity-80">{data.day}</span>
+        <span className="font-currency-sm text-currency-sm font-bold">₹{amount.toFixed(2)}</span>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function DailySpendingChart({ data }: { data: DailyData[] }) {
   const maxAmount = Math.max(...data.map(d => d.amount));
-  
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const amount = data.amount / 100;
-      return (
-        <div className="bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg shadow-lg flex flex-col gap-1 items-center">
-          <span className="font-label-caps text-label-caps opacity-80">{data.day}</span>
-          <span className="font-currency-sm text-currency-sm font-bold">₹{amount.toFixed(2)}</span>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="w-full h-32 mt-4">

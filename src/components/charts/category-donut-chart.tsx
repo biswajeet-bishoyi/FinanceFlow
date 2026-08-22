@@ -8,20 +8,21 @@ type CategoryData = {
   color: string;
 };
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const amount = payload[0].value / 100;
+    return (
+      <div className="bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2">
+        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
+        <span className="font-body-sm text-body-sm font-medium">{payload[0].name}</span>
+        <span className="font-currency-sm text-currency-sm">₹{amount.toFixed(2)}</span>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function CategoryDonutChart({ data, totalSpent }: { data: CategoryData[], totalSpent: number }) {
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const amount = payload[0].value / 100;
-      return (
-        <div className="bg-inverse-surface text-inverse-on-surface px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
-          <span className="font-body-sm text-body-sm font-medium">{payload[0].name}</span>
-          <span className="font-currency-sm text-currency-sm">₹{amount.toFixed(2)}</span>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="relative h-64 w-full flex items-center justify-center">
