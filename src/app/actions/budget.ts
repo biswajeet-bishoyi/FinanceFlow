@@ -1,5 +1,5 @@
-import { requireUser } from "@/lib/auth";
 "use server";
+import { requireUser } from "@/lib/auth";
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
