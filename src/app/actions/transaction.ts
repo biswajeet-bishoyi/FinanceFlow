@@ -66,5 +66,5 @@ export async function addExpense(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/transactions");
     revalidatePath("/friends");
-    return { success: true };
+    return;
 }

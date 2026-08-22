@@ -6,13 +6,13 @@ import { revalidatePath } from "next/cache";
 export async function createGoal(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const name = formData.get("name") as string;
     const targetAmountStr = formData.get("targetAmount") as string;
     
     if (!name || !targetAmountStr) {
-      return { success: false, error: "Missing required fields" };
+      return;
     }
 
     // Convert to paise (cents)
@@ -29,22 +29,22 @@ export async function createGoal(formData: FormData) {
     });
 
     revalidatePath("/goals");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }
 
 export async function addContribution(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const goalId = formData.get("goalId") as string;
     const amountStr = formData.get("amount") as string;
 
     if (!goalId || !amountStr) {
-      return { success: false, error: "Missing required fields" };
+      return;
     }
 
     const amount = Math.round(parseFloat(amountStr) * 100);
@@ -69,8 +69,8 @@ export async function addContribution(formData: FormData) {
 
     revalidatePath("/goals");
     revalidatePath("/"); // Update home dashboard (affects available balance if we implement it)
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }

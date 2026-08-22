@@ -6,10 +6,10 @@ import { revalidatePath } from "next/cache";
 export async function addFriend(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const name = formData.get("name") as string;
-    if (!name) return { success: false, error: "Name required" };
+    if (!name) return;
 
     const colors = ["#4ADE80", "#60A5FA", "#F472B6", "#FBBF24", "#A78BFA"];
     const avatarColor = colors[Math.floor(Math.random() * colors.length)];
@@ -23,16 +23,16 @@ export async function addFriend(formData: FormData) {
     });
 
     revalidatePath("/friends");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }
 
 export async function settleDebt(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const recordId = formData.get("recordId") as string;
     
@@ -42,8 +42,8 @@ export async function settleDebt(formData: FormData) {
     });
 
     revalidatePath("/friends");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }

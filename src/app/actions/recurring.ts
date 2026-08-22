@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function createRecurringExpense(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const label = formData.get("label") as string;
     const amountStr = formData.get("amount") as string;
@@ -14,7 +14,7 @@ export async function createRecurringExpense(formData: FormData) {
     const categoryId = formData.get("categoryId") as string;
 
     if (!label || !amountStr || !nextDueAtStr || !categoryId) {
-      return { success: false, error: "Missing required fields" };
+      return;
     }
 
     const amount = Math.round(parseFloat(amountStr) * 100);
@@ -23,7 +23,7 @@ export async function createRecurringExpense(formData: FormData) {
     const account = await prisma.account.findFirst({
       where: { userId: user.id },
     });
-    if (!account) return { success: false, error: "No account found" };
+    if (!account) return;
 
     await prisma.recurringExpense.create({
       data: {
@@ -40,16 +40,16 @@ export async function createRecurringExpense(formData: FormData) {
 
     revalidatePath("/recurring");
     revalidatePath("/");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }
 
 export async function cancelRecurringExpense(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const id = formData.get("id") as string;
 
@@ -60,8 +60,8 @@ export async function cancelRecurringExpense(formData: FormData) {
 
     revalidatePath("/recurring");
     revalidatePath("/");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }

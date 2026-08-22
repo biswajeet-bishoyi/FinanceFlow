@@ -19,10 +19,8 @@ export default async function AddExpensePage() {
     <main className="flex-grow px-container-padding py-section-gap pb-28 md:pb-section-gap max-w-3xl mx-auto w-full pt-6">
       <form action={async (formData) => {
         "use server";
-        const res = await addExpense(formData);
-        if (res.success) {
-          redirect("/");
-        }
+        await addExpense(formData);
+        redirect("/");
       }} className="flex flex-col gap-section-gap">
         {/* Amount Input */}
         <div className="flex flex-col items-center justify-center py-8">

@@ -6,13 +6,13 @@ import { revalidatePath } from "next/cache";
 export async function updateEmergencyReserve(formData: FormData) {
   try {
     const user = await prisma.user.findFirst();
-    if (!user) return { success: false, error: "Not logged in" };
+    if (!user) return;
 
     const cycleId = formData.get("cycleId") as string;
     const amountStr = formData.get("amount") as string;
 
     if (!cycleId || !amountStr) {
-      return { success: false, error: "Missing required fields" };
+      return;
     }
 
     const amount = Math.round(parseFloat(amountStr) * 100);
@@ -23,8 +23,8 @@ export async function updateEmergencyReserve(formData: FormData) {
     });
 
     revalidatePath("/");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return;
   }
 }
