@@ -5,7 +5,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { BottomNav } from "@/components/bottom-nav";
 
-import { getAuthUser } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +27,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getAuthUser();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
   let dbUser = null;
   if (user) {
     dbUser = await prisma.user.findFirst({
