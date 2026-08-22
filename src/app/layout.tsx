@@ -5,6 +5,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { BottomNav } from "@/components/bottom-nav";
 
+import { getAuthUser } from "@/utils/supabase/server";
+
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -25,6 +27,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getAuthUser();
+  let dbUser = null;
+  if (user) {
+    dbUser = await prisma.user.findFirst({
+      where: { authId: user.id },
+      include: { profile: true }
+    });
+  }
+
+  const displayName = dbUser?.profile?.displayName || user?.email?.split('@')[0] || "User";
+  const displayInitial = displayName.charAt(0).toUpperCase();
+
   return (
     <html lang="en" className="light">
       <head>
@@ -36,15 +50,37 @@ export default async function RootLayout({
         {/* TopAppBar */}
         <header className="w-full top-0 sticky z-40 bg-surface dark:bg-on-background shadow-sm transition-colors duration-200 ease-in-out">
           <div className="flex justify-between items-center h-16 px-container-padding w-full">
-            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border-2 border-surface-container-high">
-              <img alt="User profile picture" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq8F6fRveL3rbYxZaMbJV386_LBxxG5lOhRj11B_nyHKE9IFVwbIGgXX9csMbH3ZhLj3xfs58AxZ1ZW1YSVl00Gm7wEz56984GCwEktqWRpi_FQU2fDFGOYrUxw3stCLyH9D5g7Kx48A3sV21SfyNN4MENa9gQf86TKwhdMVNjNT6jA_LlSOpGYzUwwO4PDRFd_T5bWPm2rNqrjPmePhiuT-7H-bjwiOAYSEFjnViAk10GId3ooRPI3g" />
-            </div>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-lg border-2 border-surface-container-high">
+                  {displayInitial}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-body-sm text-body-sm text-on-surface font-bold">{displayName}</span>
+                  <span className="font-label-caps text-[10px] text-on-surface-variant max-w-[120px] truncate">{user.email}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="w-10 h-10"></div>
+            )}
+            
             <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-surface-bright text-center flex-1 mx-4">
               FinanceFlow
             </h1>
-            <button className="w-10 h-10 flex items-center justify-center text-primary dark:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full transition-colors duration-200 ease-in-out">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>notifications</span>
-            </button>
+
+            {user ? (
+              <form action={async () => {
+                "use server";
+                const { logout } = await import("@/app/actions/auth");
+                await logout();
+              }}>
+                <button type="submit" className="w-10 h-10 flex items-center justify-center text-error hover:bg-error-container rounded-full transition-colors duration-200 ease-in-out">
+                  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>logout</span>
+                </button>
+              </form>
+            ) : (
+              <div className="w-10 h-10"></div>
+            )}
           </div>
         </header>
 
