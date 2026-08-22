@@ -5,6 +5,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { BottomNav } from "@/components/bottom-nav";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "FinanceFlow",
   description: "A financial companion",
