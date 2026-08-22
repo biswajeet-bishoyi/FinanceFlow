@@ -1,9 +1,10 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createGoal, addContribution } from "@/app/actions/goal";
 
 export default async function GoalsPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const goals = await prisma.savingsGoal.findMany({
     where: { userId: user.id },

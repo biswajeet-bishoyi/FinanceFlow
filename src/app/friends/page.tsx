@@ -1,9 +1,10 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { addFriend, settleDebt } from "@/app/actions/friends";
 
 export default async function FriendsPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const friends = await prisma.person.findMany({
     where: { userId: user.id },

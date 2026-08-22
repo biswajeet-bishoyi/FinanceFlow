@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
@@ -5,8 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export async function createRecurringExpense(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const label = formData.get("label") as string;
     const amountStr = formData.get("amount") as string;
@@ -48,8 +49,8 @@ export async function createRecurringExpense(formData: FormData) {
 
 export async function cancelRecurringExpense(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const id = formData.get("id") as string;
 

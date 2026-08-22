@@ -1,11 +1,12 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export async function createDemoBudget() {
-  const user = await prisma.user.findFirst();
-  if (!user) throw new Error("No user found");
+  const user = await requireUser();
+  
 
   const category = await prisma.category.findFirst({
     where: { name: "Food" }

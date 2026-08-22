@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
@@ -5,8 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export async function addFriend(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const name = formData.get("name") as string;
     if (!name) return;
@@ -31,8 +32,8 @@ export async function addFriend(formData: FormData) {
 
 export async function settleDebt(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const recordId = formData.get("recordId") as string;
     

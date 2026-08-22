@@ -1,11 +1,12 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { BurnRateChart } from "@/components/charts/burn-rate-chart";
 import { CategoryDonutChart } from "@/components/charts/category-donut-chart";
 import Link from "next/link";
 
 export default async function AnalyticsPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const cycle = await prisma.pocketMoneyCycle.findFirst({
     where: { userId: user.id, status: "active" },

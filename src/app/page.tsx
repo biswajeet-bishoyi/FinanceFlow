@@ -1,12 +1,11 @@
+import { requireUser } from "@/lib/auth";
 import { calculateSafeToSpend } from "@/domain/safe-to-spend";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { DailySpendingChart } from "@/components/charts/daily-spending-chart";
 
 export default async function Home() {
-  const user = await prisma.user.findFirst({
-    include: { profile: true },
-  });
+  const user = await requireUser(true);
 
   if (!user) {
     return <div className="p-4">No user found. Please run seed script.</div>;

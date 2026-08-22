@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
@@ -14,8 +15,8 @@ export async function addExpense(formData: FormData) {
   const amountInPaise = Math.round(parseFloat(amountStr) * 100);
 
   // For V1, we fetch the first user and their first active account to log against
-  const user = await prisma.user.findFirst();
-  if (!user) throw new Error("No user found");
+  const user = await requireUser();
+  
 
   const account = await prisma.account.findFirst({
     where: { userId: user.id },

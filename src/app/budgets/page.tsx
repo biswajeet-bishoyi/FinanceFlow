@@ -1,10 +1,11 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { createDemoBudget } from "@/app/actions/budget";
 
 export default async function BudgetsPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const cycle = await prisma.pocketMoneyCycle.findFirst({
     where: { userId: user.id, status: "active" },

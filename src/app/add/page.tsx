@@ -1,10 +1,11 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { addExpense } from "@/app/actions/transaction";
 import { redirect } from "next/navigation";
 
 export default async function AddExpensePage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const categories = await prisma.category.findMany({
     where: { isSystemDefault: true },

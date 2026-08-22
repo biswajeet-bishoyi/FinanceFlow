@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
@@ -5,8 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export async function createGoal(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const name = formData.get("name") as string;
     const targetAmountStr = formData.get("targetAmount") as string;
@@ -37,8 +38,8 @@ export async function createGoal(formData: FormData) {
 
 export async function addContribution(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const goalId = formData.get("goalId") as string;
     const amountStr = formData.get("amount") as string;

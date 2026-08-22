@@ -1,8 +1,9 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export default async function TransactionsPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const transactions = await prisma.transaction.findMany({
     where: { userId: user.id },

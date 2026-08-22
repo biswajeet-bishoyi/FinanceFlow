@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 "use server";
 
 import { prisma } from "@/lib/db";
@@ -5,8 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export async function updateEmergencyReserve(formData: FormData) {
   try {
-    const user = await prisma.user.findFirst();
-    if (!user) return;
+    const user = await requireUser();
+    
 
     const cycleId = formData.get("cycleId") as string;
     const amountStr = formData.get("amount") as string;

@@ -8,6 +8,20 @@ type ChartData = {
   colorToken: string;
 }[];
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-surface border border-border p-3 rounded-lg shadow-xl">
+        <p className="font-medium text-text-primary mb-1">{payload[0].name}</p>
+        <p className="text-accent-secondary font-bold">
+          {(payload[0].value / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function CategoryDonutChart({ data }: { data: ChartData }) {
   if (!data || data.length === 0) {
     return (
@@ -17,20 +31,6 @@ export function CategoryDonutChart({ data }: { data: ChartData }) {
     );
   }
 
-  // A tiny custom tooltip so we can format currency correctly
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-surface border border-border p-3 rounded-lg shadow-xl">
-          <p className="font-medium text-text-primary mb-1">{payload[0].name}</p>
-          <p className="text-accent-secondary font-bold">
-            {(payload[0].value / 100).toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="h-64 w-full">

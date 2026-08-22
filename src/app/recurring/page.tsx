@@ -1,9 +1,10 @@
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createRecurringExpense, cancelRecurringExpense } from "@/app/actions/recurring";
 
 export default async function RecurringPage() {
-  const user = await prisma.user.findFirst();
-  if (!user) return <div className="p-4">No user found</div>;
+  const user = await requireUser();
+  
 
   const categories = await prisma.category.findMany({
     where: { OR: [{ userId: user.id }, { isSystemDefault: true }] },
