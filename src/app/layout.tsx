@@ -25,19 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = await prisma.category.findMany({
-    where: { isSystemDefault: true },
-    take: 4,
-  });
-
-  const friends = await prisma.person.findMany({
-    where: { user: { profile: { isNot: null } } }, // A bit of a hack to get friends for the first user
-  });
-
-  // We need to fetch friends specifically for the user. Since layout.tsx doesn't know the user, we just get the first user like elsewhere.
-  const user = await prisma.user.findFirst();
-  const userFriends = user ? await prisma.person.findMany({ where: { userId: user.id } }) : [];
-
   return (
     <html lang="en" className="light">
       <head>
