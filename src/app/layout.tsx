@@ -78,36 +78,36 @@ export default async function RootLayout({
             </Link>
 
             {user ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <Link
                   href="/notifications"
                   title="Notifications & Alerts"
-                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors relative"
+                  className="w-9 h-9 flex items-center justify-center text-slate-700 bg-[#F1F5F9] hover:bg-slate-200 border border-slate-200/80 rounded-full transition-all relative"
                 >
-                  <span className="material-symbols-outlined text-[20px]">notifications</span>
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse"></span>
+                  <span className="material-symbols-outlined text-[20px] text-slate-700">notifications</span>
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white animate-pulse"></span>
                 </Link>
                 <Link
                   href="/calendar"
                   title="Cycle Calendar"
-                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors"
+                  className="w-9 h-9 flex items-center justify-center text-slate-700 bg-[#F1F5F9] hover:bg-slate-200 border border-slate-200/80 rounded-full transition-all"
                 >
-                  <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                  <span className="material-symbols-outlined text-[20px] text-slate-700">calendar_month</span>
                 </Link>
                 <Link
                   href="/settings"
                   title="Cycle Settings"
-                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors"
+                  className="w-9 h-9 flex items-center justify-center text-slate-700 bg-[#F1F5F9] hover:bg-slate-200 border border-slate-200/80 rounded-full transition-all"
                 >
-                  <span className="material-symbols-outlined text-[20px]">settings</span>
+                  <span className="material-symbols-outlined text-[20px] text-slate-700">settings</span>
                 </Link>
                 <form action={async () => {
                   "use server";
                   const { logout } = await import("@/app/actions/auth");
                   await logout();
                 }}>
-                  <button type="submit" title="Sign Out" className="w-9 h-9 flex items-center justify-center text-error hover:bg-error-container/30 rounded-full transition-colors">
-                    <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>logout</span>
+                  <button type="submit" title="Sign Out" className="w-9 h-9 flex items-center justify-center text-error bg-error-container/30 hover:bg-error-container border border-error/20 rounded-full transition-all">
+                    <span className="material-symbols-outlined text-[20px] text-error" style={{ fontVariationSettings: "'FILL' 0" }}>logout</span>
                   </button>
                 </form>
               </div>
