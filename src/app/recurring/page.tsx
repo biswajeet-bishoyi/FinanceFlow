@@ -6,10 +6,19 @@ import { createRecurringExpense, deleteRecurringExpense } from "@/app/actions/re
 export default async function RecurringPage() {
   const user = await requireUser();
 
-  const categories = await prisma.category.findMany({
+  const allCategories = await prisma.category.findMany({
     where: { OR: [{ userId: user.id }, { isSystemDefault: true }] },
     orderBy: { name: "asc" }
   });
+
+  const categoryMap = new Map<string, typeof allCategories[0]>();
+  for (const cat of allCategories) {
+    const key = cat.name.trim().toLowerCase();
+    if (!categoryMap.has(key) || cat.userId === user.id) {
+      categoryMap.set(key, cat);
+    }
+  }
+  const categories = Array.from(categoryMap.values());
 
   const recurring = await prisma.recurringExpense.findMany({
     where: { userId: user.id, active: true },

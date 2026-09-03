@@ -29,7 +29,7 @@ export default async function BudgetsPage() {
     });
   }
 
-  const categories = await prisma.category.findMany({
+  const allCategories = await prisma.category.findMany({
     where: {
       OR: [
         { userId: user.id },
@@ -38,6 +38,15 @@ export default async function BudgetsPage() {
     },
     orderBy: { name: "asc" }
   });
+
+  const categoryMap = new Map<string, typeof allCategories[0]>();
+  for (const cat of allCategories) {
+    const key = cat.name.trim().toLowerCase();
+    if (!categoryMap.has(key) || cat.userId === user.id) {
+      categoryMap.set(key, cat);
+    }
+  }
+  const categories = Array.from(categoryMap.values());
 
   const budgets = await prisma.budget.findMany({
     where: { userId: user.id },
