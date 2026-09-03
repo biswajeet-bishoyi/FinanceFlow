@@ -29,20 +29,20 @@ export function DailySpendingChart({ data }: { data: DailyData[] }) {
     <div className="w-full h-32 mt-4">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 15, right: 0, left: 0, bottom: 0 }}>
-          <XAxis 
-            dataKey="day" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: '#76777d', fontSize: 10, fontFamily: 'JetBrains Mono' }} // outline color and label-caps
+          <XAxis
+            dataKey="day"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--color-outline)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
             dy={10}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
           <Bar dataKey="amount" radius={[4, 4, 4, 4]}>
             {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={entry.isToday ? "#000000" : "#e5eeff"} // primary vs surface-container
-                className={entry.isToday ? "shadow-md" : "hover:fill-[#bec6e0] transition-colors cursor-pointer"} // primary-fixed-dim on hover
+              <Cell
+                key={`cell-${index}`}
+                fill={entry.isToday ? "var(--color-primary)" : "var(--color-chart-muted)"}
+                className={entry.isToday ? "shadow-md" : "hover:opacity-80 transition-opacity cursor-pointer"}
               />
             ))}
           </Bar>

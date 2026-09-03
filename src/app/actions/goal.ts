@@ -1,61 +1,85 @@
 "use server";
 import { requireUser } from "@/lib/auth";
-
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { createGoalSchema, addContributionSchema } from "@/lib/validation";
+import { parseMoneyInput } from "@/lib/format";
 
 export async function createGoal(formData: FormData) {
   try {
-    const user = await requireUser();
-    
+    const rawData = {
+      name: formData.get("name") as string,
+      targetAmount: formData.get("targetAmount") as string,
+      icon: (formData.get("icon") as string) || undefined,
+    };
 
-    const name = formData.get("name") as string;
-    const targetAmountStr = formData.get("targetAmount") as string;
-    
-    if (!name || !targetAmountStr) {
-      return;
+    const parsed = createGoalSchema.safeParse(rawData);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message || "Invalid input" };
     }
 
-    // Convert to paise (cents)
-    const targetAmount = Math.round(parseFloat(targetAmountStr) * 100);
+    const { name, targetAmount, icon } = parsed.data;
+    const targetAmountInPaise = parseMoneyInput(targetAmount);
+    if (targetAmountInPaise <= 0) {
+      return { success: false, error: "Target amount must be greater than 0" };
+    }
+
+    const user = await requireUser();
 
     await prisma.savingsGoal.create({
       data: {
         userId: user.id,
-        name,
-        targetAmount,
+        name: name.trim(),
+        targetAmount: targetAmountInPaise,
         status: "active",
-        icon: "savings",
+        icon: icon || "savings",
       },
     });
 
     revalidatePath("/goals");
-    return;
+    revalidatePath("/");
+    return { success: true };
   } catch (error: any) {
-    return;
+    console.error("createGoal error:", error);
+    return { success: false, error: error.message };
   }
 }
 
 export async function addContribution(formData: FormData) {
   try {
-    const user = await requireUser();
-    
+    const rawData = {
+      goalId: formData.get("goalId") as string,
+      amount: formData.get("amount") as string,
+    };
 
-    const goalId = formData.get("goalId") as string;
-    const amountStr = formData.get("amount") as string;
-
-    if (!goalId || !amountStr) {
-      return;
+    const parsed = addContributionSchema.safeParse(rawData);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message || "Invalid input" };
     }
 
-    const amount = Math.round(parseFloat(amountStr) * 100);
+    const { goalId, amount } = parsed.data;
+    const amountInPaise = parseMoneyInput(amount);
+    if (amountInPaise <= 0) {
+      return { success: false, error: "Amount must be greater than 0" };
+    }
+
+    const user = await requireUser();
+
+    // Verify the goal belongs to this user
+    const goal = await prisma.savingsGoal.findFirst({
+      where: { id: goalId, userId: user.id },
+    });
+
+    if (!goal) {
+      return { success: false, error: "Goal not found" };
+    }
 
     // Run in a transaction to update both the contribution log and the goal's currentAmount
     await prisma.$transaction(async (tx) => {
       await tx.goalContribution.create({
         data: {
           goalId,
-          amount,
+          amount: amountInPaise,
           occurredAt: new Date(),
         },
       });
@@ -63,15 +87,52 @@ export async function addContribution(formData: FormData) {
       await tx.savingsGoal.update({
         where: { id: goalId },
         data: {
-          currentAmount: { increment: amount },
+          currentAmount: { increment: amountInPaise },
         },
       });
     });
 
     revalidatePath("/goals");
-    revalidatePath("/"); // Update home dashboard (affects available balance if we implement it)
-    return;
+    revalidatePath("/");
+    return { success: true };
   } catch (error: any) {
-    return;
+    console.error("addContribution error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteGoal(formData: FormData) {
+  try {
+    const goalId = formData.get("id") as string;
+    if (!goalId) {
+      return { success: false, error: "Goal ID required" };
+    }
+
+    const user = await requireUser();
+
+    // Verify the goal belongs to this user
+    const goal = await prisma.savingsGoal.findFirst({
+      where: { id: goalId, userId: user.id },
+    });
+
+    if (!goal) {
+      return { success: false, error: "Goal not found" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.goalContribution.deleteMany({
+        where: { goalId }
+      });
+      await tx.savingsGoal.delete({
+        where: { id: goalId }
+      });
+    });
+
+    revalidatePath("/goals");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    console.error("deleteGoal error:", error);
+    return { success: false, error: error.message };
   }
 }

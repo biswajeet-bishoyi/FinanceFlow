@@ -46,7 +46,7 @@ export default function SignupPage() {
             <input 
               type="text" 
               name="name"
-              className="bg-[#F1F5F9] border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
+              className="bg-input-bg border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
               required 
             />
           </div>
@@ -55,7 +55,7 @@ export default function SignupPage() {
             <input 
               type="email" 
               name="email"
-              className="bg-[#F1F5F9] border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
+              className="bg-input-bg border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
               required 
             />
           </div>
@@ -64,7 +64,7 @@ export default function SignupPage() {
             <input 
               type="password" 
               name="password"
-              className="bg-[#F1F5F9] border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
+              className="bg-input-bg border-0 text-body-lg text-primary rounded-xl focus:ring-2 focus:ring-primary block w-full p-3 transition-all"
               required 
               minLength={6}
             />

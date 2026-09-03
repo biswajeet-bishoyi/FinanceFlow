@@ -1,4 +1,5 @@
 import { requireUser } from "@/lib/auth";
+import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/db";
 import { BurnRateChart } from "@/components/charts/burn-rate-chart";
 import { CategoryDonutChart } from "@/components/charts/category-donut-chart";
@@ -80,8 +81,15 @@ export default async function AnalyticsPage() {
   
   const categoryMap = new Map<string, { amount: number, color: string }>();
   
-  // Material You categorical colors
-  const colors = ["#006c49", "#005236", "#4edea3", "#bec6e0", "#0b1c30", "#7c839b"];
+  // Material You categorical colors — pulled from design tokens (no hex literals in pages)
+  const colors = [
+    "var(--color-secondary)",
+    "var(--color-on-secondary-fixed-variant)",
+    "var(--color-secondary-fixed-dim)",
+    "var(--color-primary-fixed-dim)",
+    "var(--color-on-background)",
+    "var(--color-on-primary-container)",
+  ];
   
   expenses.forEach(t => {
     const catName = t.category.name;

@@ -49,6 +49,19 @@
   --color-inverse-primary: #bec6e0;
   --color-inverse-on-surface: #eaf1ff;
 
+  /* Semantic design tokens for inline color values previously hardcoded */
+  --color-input-bg: #f1f5f9;
+  --color-input-bg-hover: #f8fafc;
+  --color-warning-amber: #f59e0b;
+  --color-expense-warm: #e65100;
+  --color-expense-warm-bg: #fff3e0;
+  --color-info-blue: #1976d2;
+  --color-info-blue-bg: #e3f2fd;
+  --color-violet: #512da8;
+  --color-violet-bg: #ede7f6;
+  --color-chart-muted: #e5eeff;
+  --color-friend-avatar-fallback: #006c49;
+
   --spacing-touch-target: 48px;
   --spacing-container-padding: 20px;
   --spacing-stack-gap: 12px;
@@ -138,3 +151,20 @@
   line-height: 20px;
   font-weight: 600;
 }
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+

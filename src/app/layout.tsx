@@ -12,7 +12,13 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "FinanceFlow",
-  description: "A financial companion",
+  description: "A financial companion for students",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "FinanceFlow",
+  },
 };
 
 export const viewport: Viewport = {
@@ -67,20 +73,44 @@ export default async function RootLayout({
               <div className="w-10 h-10"></div>
             )}
             
-            <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-surface-bright text-center flex-1 mx-4">
+            <Link href="/" className="font-headline-lg text-headline-lg font-bold text-on-surface dark:text-surface-bright text-center flex-1 mx-2 truncate hover:opacity-80 transition-opacity">
               FinanceFlow
-            </h1>
+            </Link>
 
             {user ? (
-              <form action={async () => {
-                "use server";
-                const { logout } = await import("@/app/actions/auth");
-                await logout();
-              }}>
-                <button type="submit" className="w-10 h-10 flex items-center justify-center text-error hover:bg-error-container rounded-full transition-colors duration-200 ease-in-out">
-                  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>logout</span>
-                </button>
-              </form>
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/notifications"
+                  title="Notifications & Alerts"
+                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors relative"
+                >
+                  <span className="material-symbols-outlined text-[20px]">notifications</span>
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse"></span>
+                </Link>
+                <Link
+                  href="/calendar"
+                  title="Cycle Calendar"
+                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                </Link>
+                <Link
+                  href="/settings"
+                  title="Cycle Settings"
+                  className="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container rounded-full transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">settings</span>
+                </Link>
+                <form action={async () => {
+                  "use server";
+                  const { logout } = await import("@/app/actions/auth");
+                  await logout();
+                }}>
+                  <button type="submit" title="Sign Out" className="w-9 h-9 flex items-center justify-center text-error hover:bg-error-container/30 rounded-full transition-colors">
+                    <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>logout</span>
+                  </button>
+                </form>
+              </div>
             ) : (
               <div className="w-10 h-10"></div>
             )}

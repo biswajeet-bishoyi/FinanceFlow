@@ -38,28 +38,28 @@ export function BurnRateChart({ data }: { data: BurnRateData[] }) {
         <AreaChart data={data} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#000000" stopOpacity={0.1}/>
-              <stop offset="95%" stopColor="#000000" stopOpacity={0}/>
+              <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.1}/>
+              <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <XAxis 
-            dataKey="day" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: '#76777d', fontSize: 10, fontFamily: 'JetBrains Mono' }} 
+          <XAxis
+            dataKey="day"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--color-outline)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
             minTickGap={20}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: '#76777d', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--color-outline)', fontSize: 10, fontFamily: 'JetBrains Mono' }}
             tickFormatter={(val) => `₹${Math.round(val / 100)}`}
           />
           <Tooltip content={<CustomTooltip />} />
-          
+
           <Area type="stepAfter" dataKey="actualBalance" stroke="transparent" fill="url(#colorActual)" />
-          <Line type="monotone" dataKey="idealBalance" stroke="#006c49" strokeWidth={2} strokeDasharray="5 5" dot={false} isAnimationActive={false} />
-          <Line type="stepAfter" dataKey="actualBalance" stroke="#000000" strokeWidth={3} dot={false} activeDot={{ r: 6, fill: "#000000", stroke: "#fff", strokeWidth: 2 }} />
+          <Line type="monotone" dataKey="idealBalance" stroke="var(--color-secondary)" strokeWidth={2} strokeDasharray="5 5" dot={false} isAnimationActive={false} />
+          <Line type="stepAfter" dataKey="actualBalance" stroke="var(--color-primary)" strokeWidth={3} dot={false} activeDot={{ r: 6, fill: "var(--color-primary)", stroke: "#fff", strokeWidth: 2 }} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
