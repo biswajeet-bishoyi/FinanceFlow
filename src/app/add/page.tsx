@@ -7,15 +7,21 @@ import { redirect } from "next/navigation";
 export default async function AddExpensePage() {
   const user = await requireUser();
 
-  const allCategories = await prisma.category.findMany({
-    where: { 
-      OR: [
-        { userId: user.id },
-        { isSystemDefault: true }
-      ]
-    },
-    orderBy: { name: "asc" },
-  });
+  const [allCategories, friends] = await Promise.all([
+    prisma.category.findMany({
+      where: {
+        OR: [
+          { userId: user.id },
+          { isSystemDefault: true },
+        ],
+      },
+      orderBy: { name: "asc" },
+    }),
+    prisma.person.findMany({
+      where: { userId: user.id },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   // Deduplicate categories by name to prevent multiple 'Food', 'Transport', etc.
   const categoryMap = new Map<string, typeof allCategories[0]>();
@@ -26,11 +32,6 @@ export default async function AddExpensePage() {
     }
   }
   const categories = Array.from(categoryMap.values());
-
-  const friends = await prisma.person.findMany({
-    where: { userId: user.id },
-    orderBy: { name: "asc" },
-  });
 
   return (
     <main className="flex-grow px-container-padding py-section-gap pb-28 md:pb-section-gap max-w-3xl mx-auto w-full pt-6">

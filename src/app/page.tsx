@@ -13,11 +13,28 @@ import { generateSmartInsights } from "@/domain/insights";
 export default async function Home() {
   const user = await requireUser(true);
 
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-    include: { incomes: true },
-  });
+  const [initialCycle, rawAccounts, transactions, goals, allRecurring] = await Promise.all([
+    prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+      include: { incomes: true },
+    }),
+    prisma.account.findMany({
+      where: { userId: user.id, archivedAt: null },
+    }),
+    prisma.transaction.findMany({
+      where: { userId: user.id },
+      include: { category: true },
+      orderBy: { occurredAt: "desc" },
+    }),
+    prisma.savingsGoal.findMany({
+      where: { userId: user.id },
+    }),
+    prisma.recurringExpense.findMany({
+      where: { userId: user.id, active: true },
+    }),
+  ]);
 
+  let cycle = initialCycle;
   if (!cycle) {
     const now = new Date();
     const nextMonth = new Date(now);
@@ -34,14 +51,11 @@ export default async function Home() {
         emergencyReserveAmount: 0,
         status: "active",
       },
-      include: { incomes: true }
+      include: { incomes: true },
     });
   }
 
-  let accounts = await prisma.account.findMany({
-    where: { userId: user.id, archivedAt: null },
-  });
-
+  let accounts = rawAccounts;
   if (accounts.length === 0) {
     const defaultAcc = await prisma.account.create({
       data: {
@@ -49,28 +63,15 @@ export default async function Home() {
         name: "Cash",
         type: "cash",
         startingBalance: 0,
-      }
+      },
     });
     accounts = [defaultAcc];
   }
 
-  const transactions = await prisma.transaction.findMany({
-    where: { userId: user.id },
-    include: { category: true },
-    orderBy: { occurredAt: "desc" },
-  });
-
-  const goals = await prisma.savingsGoal.findMany({
-    where: { userId: user.id }
-  });
-
-  const recurringExpenses = await prisma.recurringExpense.findMany({
-    where: {
-      userId: user.id,
-      active: true,
-      nextDueAt: { lte: cycle.endDate, gte: new Date() }
-    },
-  });
+  const now = new Date();
+  const recurringExpenses = allRecurring.filter(
+    (r) => r.nextDueAt && r.nextDueAt <= cycle.endDate && r.nextDueAt >= now
+  );
 
   const balance = calculateCycleBalance({
     accounts,

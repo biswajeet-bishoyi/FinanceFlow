@@ -9,25 +9,26 @@ export default async function AnalyticsPage() {
   const user = await requireUser();
   
 
-  const cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-    include: { incomes: true },
-  });
+  const [cycle, accounts, allTransactions] = await Promise.all([
+    prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+      include: { incomes: true },
+    }),
+    prisma.account.findMany({
+      where: { userId: user.id, archivedAt: null },
+    }),
+    prisma.transaction.findMany({
+      where: { userId: user.id },
+      include: { category: true },
+      orderBy: { occurredAt: "asc" },
+    }),
+  ]);
 
   if (!cycle) return <div className="p-4">No active cycle</div>;
 
-  const accounts = await prisma.account.findMany({
-    where: { userId: user.id, archivedAt: null },
-  });
-
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      userId: user.id,
-      occurredAt: { gte: cycle.startDate, lte: cycle.endDate },
-    },
-    include: { category: true },
-    orderBy: { occurredAt: "asc" },
-  });
+  const transactions = allTransactions.filter(
+    (t) => t.occurredAt >= cycle.startDate && t.occurredAt <= cycle.endDate
+  );
 
   // Calculate Starting Balance for cycle
   let startingBalance = accounts.reduce((acc, account) => acc + account.startingBalance, 0);

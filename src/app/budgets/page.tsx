@@ -7,10 +7,33 @@ import { getCategoryIcon } from "@/lib/icons";
 export default async function BudgetsPage() {
   const user = await requireUser();
 
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-  });
+  const [initialCycle, allCategories, budgets, allExpenseTransactions] = await Promise.all([
+    prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+    }),
+    prisma.category.findMany({
+      where: {
+        OR: [
+          { userId: user.id },
+          { isSystemDefault: true },
+        ],
+      },
+      orderBy: { name: "asc" },
+    }),
+    prisma.budget.findMany({
+      where: { userId: user.id },
+      include: { category: true },
+      orderBy: { amount: "desc" },
+    }),
+    prisma.transaction.findMany({
+      where: {
+        userId: user.id,
+        type: "expense",
+      },
+    }),
+  ]);
 
+  let cycle = initialCycle;
   if (!cycle) {
     const now = new Date();
     const nextMonth = new Date(now);
@@ -25,19 +48,9 @@ export default async function BudgetsPage() {
         expectedAmount: 0,
         frequency: "monthly",
         status: "active",
-      }
+      },
     });
   }
-
-  const allCategories = await prisma.category.findMany({
-    where: {
-      OR: [
-        { userId: user.id },
-        { isSystemDefault: true }
-      ]
-    },
-    orderBy: { name: "asc" }
-  });
 
   const categoryMap = new Map<string, typeof allCategories[0]>();
   for (const cat of allCategories) {
@@ -48,19 +61,9 @@ export default async function BudgetsPage() {
   }
   const categories = Array.from(categoryMap.values());
 
-  const budgets = await prisma.budget.findMany({
-    where: { userId: user.id },
-    include: { category: true },
-    orderBy: { amount: "desc" }
-  });
-
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      userId: user.id,
-      type: "expense",
-      occurredAt: { gte: cycle.startDate, lte: cycle.endDate },
-    },
-  });
+  const transactions = allExpenseTransactions.filter(
+    (t) => t.occurredAt >= cycle.startDate && t.occurredAt <= cycle.endDate
+  );
 
   const totalSpent = transactions.reduce((acc, t) => acc + t.amount, 0);
   const totalLimit = budgets.reduce((acc, b) => acc + b.amount, 0);

@@ -27,21 +27,23 @@ export async function addExpense(formData: FormData) {
 
   const user = await requireUser();
 
-  // Verify category belongs to user (or is a system default)
-  const category = await prisma.category.findFirst({
-    where: {
-      id: categoryId,
-      OR: [{ userId: user.id }, { isSystemDefault: true }],
-    },
-  });
+  const [category, existingAccount] = await Promise.all([
+    prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        OR: [{ userId: user.id }, { isSystemDefault: true }],
+      },
+    }),
+    prisma.account.findFirst({
+      where: { userId: user.id, archivedAt: null },
+    }),
+  ]);
+
   if (!category) {
     return { success: false, error: "Category not found" };
   }
 
-  let account = await prisma.account.findFirst({
-    where: { userId: user.id, archivedAt: null },
-  });
-
+  let account = existingAccount;
   if (!account) {
     account = await prisma.account.create({
       data: {
@@ -49,7 +51,7 @@ export async function addExpense(formData: FormData) {
         name: "Cash",
         type: "cash",
         startingBalance: 0,
-      }
+      },
     });
   }
 
@@ -131,11 +133,23 @@ export async function addIncome(formData: FormData) {
 
   const user = await requireUser();
 
-  // Find or create active cycle
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-  });
+  // Fetch cycle, account, and category concurrently
+  const [initialCycle, initialAccount, initialCategory] = await Promise.all([
+    prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+    }),
+    prisma.account.findFirst({
+      where: { userId: user.id, archivedAt: null },
+    }),
+    prisma.category.findFirst({
+      where: {
+        userId: user.id,
+        name: "Income",
+      },
+    }),
+  ]);
 
+  let cycle = initialCycle;
   if (!cycle) {
     const now = new Date();
     const nextMonth = new Date(now);
@@ -150,14 +164,11 @@ export async function addIncome(formData: FormData) {
         expectedAmount: amountInPaise,
         frequency: "monthly",
         status: "active",
-      }
+      },
     });
   }
 
-  let account = await prisma.account.findFirst({
-    where: { userId: user.id, archivedAt: null },
-  });
-
+  let account = initialAccount;
   if (!account) {
     account = await prisma.account.create({
       data: {
@@ -165,18 +176,11 @@ export async function addIncome(formData: FormData) {
         name: "Cash",
         type: "cash",
         startingBalance: 0,
-      }
+      },
     });
   }
 
-  // Find or create an income category
-  let incomeCategory = await prisma.category.findFirst({
-    where: {
-      userId: user.id,
-      name: "Income",
-    }
-  });
-
+  let incomeCategory = initialCategory;
   if (!incomeCategory) {
     incomeCategory = await prisma.category.create({
       data: {
@@ -184,7 +188,7 @@ export async function addIncome(formData: FormData) {
         name: "Income",
         icon: "payments",
         colorToken: "var(--color-secondary)",
-      }
+      },
     });
   }
 

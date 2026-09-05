@@ -8,11 +8,29 @@ import Link from "next/link";
 export default async function CalendarPage() {
   const user = await requireUser(true);
 
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-    include: { incomes: true },
-  });
+  const [initialCycle, rawAccounts, transactions, goals, recurringExpenses] = await Promise.all([
+    prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+      include: { incomes: true },
+    }),
+    prisma.account.findMany({
+      where: { userId: user.id, archivedAt: null },
+    }),
+    prisma.transaction.findMany({
+      where: { userId: user.id },
+      include: { category: true },
+      orderBy: { occurredAt: "desc" },
+    }),
+    prisma.savingsGoal.findMany({
+      where: { userId: user.id },
+    }),
+    prisma.recurringExpense.findMany({
+      where: { userId: user.id, active: true },
+      include: { category: true },
+    }),
+  ]);
 
+  let cycle = initialCycle;
   if (!cycle) {
     const now = new Date();
     const nextMonth = new Date(now);
@@ -33,27 +51,16 @@ export default async function CalendarPage() {
     });
   }
 
-  const accounts = await prisma.account.findMany({
-    where: { userId: user.id, archivedAt: null },
-  });
-
-  const transactions = await prisma.transaction.findMany({
-    where: { userId: user.id },
-    include: { category: true },
-    orderBy: { occurredAt: "desc" },
-  });
-
-  const goals = await prisma.savingsGoal.findMany({
-    where: { userId: user.id },
-  });
-
-  const recurringExpenses = await prisma.recurringExpense.findMany({
-    where: {
-      userId: user.id,
-      active: true,
-    },
-    include: { category: true },
-  });
+  const accounts = rawAccounts.length > 0 ? rawAccounts : [
+    await prisma.account.create({
+      data: {
+        userId: user.id,
+        name: "Cash",
+        type: "cash",
+        startingBalance: 0,
+      }
+    })
+  ];
 
   const balance = calculateCycleBalance({
     accounts,
