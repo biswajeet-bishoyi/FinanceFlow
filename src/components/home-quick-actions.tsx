@@ -18,29 +18,41 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
 
   const handleAddMoney = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
     const formData = new FormData(e.currentTarget);
-    const result = await addIncome(formData);
-    setLoading(false);
-    if (result.success) {
-      setShowAddMoney(false);
-      toast.success("Money added to your balance");
-    } else {
-      toast.error(result.error || "Could not add money");
+    setShowAddMoney(false);
+    const toastId = toast.loading("Adding money to balance...");
+    setLoading(true);
+    try {
+      const result = await addIncome(formData);
+      if (result.success) {
+        toast.success("Money added to your balance", { id: toastId });
+      } else {
+        toast.error(result.error || "Could not add money", { id: toastId });
+      }
+    } catch {
+      toast.error("Could not add money", { id: toastId });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleTransfer = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
     const formData = new FormData(e.currentTarget);
-    const result = await transferFunds(formData);
-    setLoading(false);
-    if (result.success) {
-      setShowTransfer(false);
-      toast.success("Transfer complete");
-    } else {
-      toast.error(result.error || "Could not transfer funds");
+    setShowTransfer(false);
+    const toastId = toast.loading("Transferring funds...");
+    setLoading(true);
+    try {
+      const result = await transferFunds(formData);
+      if (result.success) {
+        toast.success("Transfer complete", { id: toastId });
+      } else {
+        toast.error(result.error || "Could not transfer funds", { id: toastId });
+      }
+    } catch {
+      toast.error("Could not transfer funds", { id: toastId });
+    } finally {
+      setLoading(false);
     }
   };
 

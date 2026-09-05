@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { addExpense, addIncome } from "@/app/actions/transaction";
 import { getCategoryIcon } from "@/lib/icons";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 export default async function AddExpensePage() {
   const user = await requireUser();
@@ -165,12 +166,12 @@ export default async function AddExpensePage() {
           </section>
 
           {/* Submit Button */}
-          <button 
-            className="mt-2 bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-4 px-6 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 active:scale-[0.98] transition-all border-t border-white/20" 
-            type="submit"
+          <SubmitButton 
+            pendingText="Saving Transaction..."
+            className="mt-2 bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-4 px-6 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 active:scale-[0.98] transition-all border-t border-white/20 cursor-pointer"
           >
             Save Transaction
-          </button>
+          </SubmitButton>
         </form>
       </div>
     </main>

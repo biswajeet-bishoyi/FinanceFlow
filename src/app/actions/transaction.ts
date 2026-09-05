@@ -110,9 +110,9 @@ export async function addExpense(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/transactions");
-  revalidatePath("/friends");
-  revalidatePath("/analytics");
-  revalidatePath("/budgets");
+  if (splitWith) {
+    revalidatePath("/friends");
+  }
   return { success: true };
 }
 
@@ -225,7 +225,6 @@ export async function addIncome(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/transactions");
-  revalidatePath("/analytics");
   return { success: true };
 }
 
@@ -255,8 +254,6 @@ export async function deleteTransaction(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/transactions");
-  revalidatePath("/analytics");
-  revalidatePath("/budgets");
   return { success: true };
 }
 

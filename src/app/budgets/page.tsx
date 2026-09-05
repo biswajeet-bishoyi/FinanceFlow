@@ -3,6 +3,7 @@ import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/db";
 import { createBudget, deleteBudget, createDemoBudget } from "@/app/actions/budget";
 import { getCategoryIcon } from "@/lib/icons";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 export default async function BudgetsPage() {
   const user = await requireUser();
@@ -250,12 +251,12 @@ export default async function BudgetsPage() {
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            className="bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-3 px-6 mt-2 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 transition-all active:scale-[0.98]"
+          <SubmitButton 
+            pendingText="Saving Budget..."
+            className="bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-3 px-6 mt-2 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 transition-all active:scale-[0.98] cursor-pointer"
           >
             Save Budget
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </main>

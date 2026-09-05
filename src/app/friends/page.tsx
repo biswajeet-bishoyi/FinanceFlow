@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/db";
 import { addFriend, settleDebt, recordLending, deleteFriend } from "@/app/actions/friends";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 export default async function FriendsPage() {
   const user = await requireUser();
@@ -120,12 +121,12 @@ export default async function FriendsPage() {
               </div>
             </div>
 
-            <button 
-              type="submit" 
-              className="bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-3 px-6 mt-1 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 transition-all active:scale-[0.98]"
+            <SubmitButton 
+              pendingText="Recording Amount..."
+              className="bg-primary text-on-primary font-headline-md text-headline-md rounded-lg py-3 px-6 mt-1 w-full shadow-[0px_8px_20px_rgba(15,23,42,0.08)] hover:bg-opacity-90 transition-all active:scale-[0.98] cursor-pointer"
             >
               Record Amount
-            </button>
+            </SubmitButton>
           </form>
         </section>
       )}
@@ -218,9 +219,9 @@ export default async function FriendsPage() {
             className="flex-grow bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary p-3 transition-colors" 
             required 
           />
-          <button type="submit" className="bg-primary text-on-primary font-medium rounded-lg px-6 hover:bg-opacity-90 transition-all active:scale-95">
+          <SubmitButton pendingText="Adding..." className="bg-primary text-on-primary font-medium rounded-lg px-6 hover:bg-opacity-90 transition-all active:scale-95 cursor-pointer">
             Add
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </main>

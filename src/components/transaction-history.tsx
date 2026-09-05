@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatMoney } from "@/lib/format";
 import { deleteTransaction } from "@/app/actions/transaction";
 import { getCategoryIcon } from "@/lib/icons";
+import { toast } from "sonner";
 
 type TransactionItem = {
   id: string;
@@ -20,11 +21,16 @@ type TransactionItem = {
 };
 
 export function TransactionHistory({ initialTransactions }: { initialTransactions: TransactionItem[] }) {
+  const [transactions, setTransactions] = useState<TransactionItem[]>(initialTransactions);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filteredTransactions = initialTransactions.filter((tx) => {
+  useEffect(() => {
+    setTransactions(initialTransactions);
+  }, [initialTransactions]);
+
+  const filteredTransactions = transactions.filter((tx) => {
     // Type filter
     if (filterType !== "all" && tx.type !== filterType) {
       return false;
@@ -41,11 +47,17 @@ export function TransactionHistory({ initialTransactions }: { initialTransaction
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this transaction?")) return;
-    setDeletingId(id);
+    const prev = transactions;
+    setTransactions((current) => current.filter((t) => t.id !== id));
+    toast.success("Transaction deleted");
+
     const formData = new FormData();
     formData.append("id", id);
-    await deleteTransaction(formData);
-    setDeletingId(null);
+    const res = await deleteTransaction(formData);
+    if (res && !res.success) {
+      setTransactions(prev);
+      toast.error(res.error || "Could not delete transaction");
+    }
   };
 
   return (
