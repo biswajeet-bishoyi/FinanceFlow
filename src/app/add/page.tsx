@@ -4,6 +4,7 @@ import { addExpense, addIncome } from "@/app/actions/transaction";
 import { getCategoryIcon } from "@/lib/icons";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { SplitSection } from "@/components/split-section";
 
 export default async function AddExpensePage() {
   const user = await requireUser();
@@ -142,26 +143,7 @@ export default async function AddExpensePage() {
               </div>
 
               {/* Split With */}
-              {friends.length > 0 && (
-                <div>
-                  <label htmlFor="splitWith" className="block font-label-caps text-label-caps text-on-surface-variant mb-2 tracking-wide mt-2">SPLIT EQUALLY WITH (OPTIONAL)</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant">
-                      <span className="material-symbols-outlined">group</span>
-                    </div>
-                    <select 
-                      id="splitWith" 
-                      name="splitWith"
-                      className="bg-input-bg border border-transparent text-primary text-body-lg rounded-lg focus:ring-0 focus:border-primary block w-full pl-10 p-3 shadow-[inset_0_0_0_1px_#E2E8F0] transition-colors appearance-none"
-                    >
-                      <option value="">Just me (No split)</option>
-                      {friends.map(f => (
-                        <option key={f.id} value={f.id}>{f.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
+              <SplitSection friends={friends} />
             </div>
           </section>
 

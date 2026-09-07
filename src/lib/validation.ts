@@ -20,7 +20,6 @@ export const addExpenseSchema = z.object({
   date: z.string().optional(),
   note: z.string().optional(),
   merchant: z.string().optional(),
-  splitWith: z.string().uuid("Invalid friend").optional().or(z.literal("")),
 });
 
 // Goal validation

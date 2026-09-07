@@ -11,15 +11,18 @@ export async function addExpense(formData: FormData) {
     categoryId: formData.get("categoryId") as string,
     date: formData.get("date") as string,
     note: (formData.get("note") as string) || "",
-    splitWith: (formData.get("splitWith") as string) || "",
   };
+
+  // Multi-person split fields
+  const splitPersonIds = formData.getAll("splitPersonIds") as string[];
+  const splitMethod = (formData.get("splitMethod") as string) || "equal";
 
   const parsed = addExpenseSchema.safeParse(rawData);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message || "Invalid input" };
   }
 
-  const { amount, categoryId, date, note, splitWith } = parsed.data;
+  const { amount, categoryId, date, note } = parsed.data;
   const amountInPaise = parseMoneyInput(amount);
   if (amountInPaise <= 0) {
     return { success: false, error: "Amount must be greater than 0" };
@@ -72,45 +75,94 @@ export async function addExpense(formData: FormData) {
       },
     });
 
-    if (splitWith) {
-      // Verify friend exists for this user
-      const friend = await tx.person.findFirst({
-        where: { id: splitWith, userId: user.id },
+    // Multi-person split handling
+    if (splitPersonIds.length > 0) {
+      // Validate all friends belong to this user
+      const friends = await tx.person.findMany({
+        where: { id: { in: splitPersonIds }, userId: user.id },
       });
-      if (!friend) {
-        throw new Error("Friend not found");
+      if (friends.length !== splitPersonIds.length) {
+        throw new Error("One or more friends not found");
       }
 
-      // Equal split: payer + 1 friend = 2 shares
-      const shareAmount = Math.round(amountInPaise / 2);
+      // Compute each person's share
+      const totalPeople = splitPersonIds.length + 1; // friends + me
+      const splitNote = note ? `Split: ${note}` : "Split expense";
 
-      // Create split expense
-      await tx.splitExpense.create({
+      // Create the SplitExpense record
+      const splitExpense = await tx.splitExpense.create({
         data: {
           transactionId: transaction.id,
-          splitMethod: "equal",
+          splitMethod: splitMethod === "custom" ? "custom" : "equal",
           totalAmount: amountInPaise,
-        }
+        },
       });
 
-      // Friend owes you the share (excluding your own share)
-      await tx.lendingRecord.create({
-        data: {
-          userId: user.id,
-          personId: splitWith,
-          direction: "lent",
-          amount: shareAmount,
-          note: note ? `Split: ${note}` : "Split expense",
-          occurredAt,
-          status: "open",
+      for (const personId of splitPersonIds) {
+        let shareAmount: number;
+
+        if (splitMethod === "custom") {
+          const rawCustom = formData.get(`splitAmount_${personId}`) as string;
+          const parsed = parseFloat(rawCustom);
+          shareAmount = isNaN(parsed) || parsed < 0 ? 0 : Math.round(parsed * 100);
+        } else {
+          // Equal split across all people including "me"
+          shareAmount = Math.round(amountInPaise / totalPeople);
         }
+
+        // Create SplitParticipant for each friend
+        const participant = await tx.splitParticipant.create({
+          data: {
+            splitExpenseId: splitExpense.id,
+            personId,
+            shareAmount,
+          },
+        });
+
+        // Create LendingRecord so it appears on the Friends page
+        if (shareAmount > 0) {
+          await tx.lendingRecord.create({
+            data: {
+              userId: user.id,
+              personId,
+              direction: "lent",
+              amount: shareAmount,
+              note: splitNote,
+              occurredAt,
+              status: "open",
+              splitParticipantId: participant.id,
+            },
+          });
+        }
+      }
+
+      // Also create a SplitParticipant for "me" (personId null = current user)
+      const myShare =
+        splitMethod === "custom"
+          ? Math.max(
+              0,
+              amountInPaise -
+                splitPersonIds.reduce((acc, pid) => {
+                  const raw = formData.get(`splitAmount_${pid}`) as string;
+                  const v = parseFloat(raw);
+                  return acc + (isNaN(v) ? 0 : Math.round(v * 100));
+                }, 0)
+            )
+          : Math.round(amountInPaise / totalPeople);
+
+      await tx.splitParticipant.create({
+        data: {
+          splitExpenseId: splitExpense.id,
+          personId: null, // null = current user
+          shareAmount: myShare,
+        },
       });
     }
   });
 
   revalidatePath("/");
   revalidatePath("/transactions");
-  if (splitWith) {
+  if (splitPersonIds.length > 0) {
     revalidatePath("/friends");
   }
   return { success: true };
