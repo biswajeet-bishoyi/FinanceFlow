@@ -2,7 +2,7 @@ import { formatMoney } from "@/lib/format";
 
 export type SystemNotification = {
   id: string;
-  type: "safe_spend" | "bill_due" | "budget_alert" | "friend_iou" | "cycle_ending" | "tip";
+  type: "safe_spend" | "bill_due" | "budget_alert" | "friend_iou" | "cycle_ending" | "tip" | "night_recap";
   title: string;
   message: string;
   icon: string;
@@ -20,6 +20,7 @@ export function generateSystemNotifications({
   budgets,
   transactions,
   friends,
+  dailyRecap,
 }: {
   safeToSpendToday: number;
   daysRemaining: number;
@@ -27,8 +28,37 @@ export function generateSystemNotifications({
   budgets: Array<{ category?: { name: string } | null; amount: number; cautionThresholdPct: number; categoryId?: string | null }>;
   transactions: Array<{ amount: number; categoryId: string; type: string }>;
   friends: Array<{ name: string; lendingRecords: Array<{ direction: string; amount: number; status: string; note?: string | null }> }>;
+  dailyRecap?: {
+    isNightTime: boolean;
+    totalSpentToday: number;
+    safeToSpendToday: number;
+    categoryBreakdown: Array<{ categoryName: string; totalAmount: number }>;
+  };
 }): SystemNotification[] {
   const notifs: SystemNotification[] = [];
+
+  // 0. Daily Night Review (triggers in evening/night >= 8 PM or <= 4 AM)
+  if (dailyRecap && dailyRecap.isNightTime) {
+    const topCategory = dailyRecap.categoryBreakdown[0]?.categoryName;
+    const spentStr = formatMoney(dailyRecap.totalSpentToday);
+    const allowanceStr = formatMoney(dailyRecap.safeToSpendToday);
+    const breakdownMsg = topCategory
+      ? `Main expense: ${topCategory} (${formatMoney(dailyRecap.categoryBreakdown[0].totalAmount)}).`
+      : "No expenses recorded today.";
+
+    notifs.push({
+      id: "notif-night-recap",
+      type: "night_recap",
+      title: "🌙 Tonight's Spending Recap",
+      message: `You spent ${spentStr} today against your ${allowanceStr} daily allowance. ${breakdownMsg}`,
+      icon: "bedtime",
+      color: "bg-indigo-950 text-indigo-200 border border-indigo-500/20",
+      timeAgo: "Tonight",
+      actionUrl: "/#daily-recap",
+      actionLabel: "Review Today",
+      isRead: false,
+    });
+  }
 
   // 1. Daily Morning Brief
   notifs.push({

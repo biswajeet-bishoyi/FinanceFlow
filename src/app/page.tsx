@@ -9,6 +9,8 @@ import { HomeQuickActions } from "@/components/home-quick-actions";
 import { startNewCycle } from "@/app/actions/cycle";
 import { getCategoryIcon } from "@/lib/icons";
 import { generateSmartInsights } from "@/domain/insights";
+import { calculateDailyNightRecap } from "@/domain/daily-recap";
+import { DailyNightRecap } from "@/components/daily-night-recap";
 
 export default async function Home() {
   const user = await requireUser(true);
@@ -125,6 +127,23 @@ export default async function Home() {
     availableBalance: balance.availableBalance,
   });
 
+  const dailyRecap = calculateDailyNightRecap({
+    transactions: transactions.map((t) => ({
+      id: t.id,
+      amount: t.amount,
+      type: t.type,
+      occurredAt: t.occurredAt,
+      merchant: t.merchant,
+      notes: t.notes,
+      category: t.category ? {
+        name: t.category.name,
+        icon: t.category.icon,
+        colorToken: t.category.colorToken,
+      } : null,
+    })),
+    safeToSpendToday: safeToSpend.safeToSpendToday,
+  });
+
   return (
     <main className="px-container-padding py-6 pb-24 flex flex-col gap-section-gap max-w-md mx-auto md:max-w-3xl">
       {/* Total Balance & Safe to Spend Hero Section */}
@@ -160,6 +179,9 @@ export default async function Home() {
         {/* Working Add Money & Transfer actions */}
         <HomeQuickActions accounts={accounts} />
       </section>
+
+      {/* Tonight's Spending Review (Daily Night Recap) */}
+      <DailyNightRecap recap={dailyRecap} />
 
       {/* "Can I Afford This?" Simulator Banner */}
       <Link

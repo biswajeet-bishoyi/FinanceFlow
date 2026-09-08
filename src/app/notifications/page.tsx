@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { calculateSafeToSpend } from "@/domain/safe-to-spend";
 import { calculateCycleBalance } from "@/domain/cycle-balance";
 import { generateSystemNotifications } from "@/domain/notifications";
+import { calculateDailyNightRecap } from "@/domain/daily-recap";
 import { NotificationsView } from "@/components/notifications-view";
 import Link from "next/link";
 
@@ -40,6 +41,7 @@ export default async function NotificationsPage() {
 
   const transactions = await prisma.transaction.findMany({
     where: { userId: user.id },
+    include: { category: true },
   });
 
   const goals = await prisma.savingsGoal.findMany({
@@ -83,6 +85,11 @@ export default async function NotificationsPage() {
     upcomingExpenses: balance.upcomingExpenses,
   });
 
+  const dailyRecap = calculateDailyNightRecap({
+    transactions,
+    safeToSpendToday: safeToSpend.safeToSpendToday,
+  });
+
   const notifications = generateSystemNotifications({
     safeToSpendToday: safeToSpend.safeToSpendToday,
     daysRemaining: safeToSpend.daysRemaining,
@@ -90,6 +97,7 @@ export default async function NotificationsPage() {
     budgets,
     transactions: transactions.map((t) => ({ amount: t.amount, categoryId: t.categoryId, type: t.type })),
     friends,
+    dailyRecap,
   });
 
   return (
