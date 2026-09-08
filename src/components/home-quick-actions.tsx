@@ -103,7 +103,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                     placeholder="2000.00" 
                     step="0.01" 
                     min="0.01"
-                    className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors" 
+                    className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors" 
                     required 
                     autoFocus
                   />
@@ -117,7 +117,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                   name="note" 
                   placeholder="e.g. Monthly Pocket Money, Gift, Freelance" 
                   defaultValue="Pocket Money"
-                  className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors" 
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors" 
                 />
               </div>
 
@@ -125,7 +125,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                 <label className="block font-label-caps text-label-caps text-on-surface-variant mb-1">SOURCE TYPE</label>
                 <select 
                   name="sourceType" 
-                  className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
                 >
                   <option value="pocket_money">Pocket Money (Parents)</option>
                   <option value="gift">Gift / Bonus</option>
@@ -200,7 +200,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                   <label className="block font-label-caps text-label-caps text-on-surface-variant mb-1">FROM ACCOUNT</label>
                   <select 
                     name="fromAccountId" 
-                    className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+                    className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
                   >
                     {accounts.map(a => (
                       <option key={a.id} value={a.id}>{a.name} ({a.type})</option>
@@ -213,7 +213,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                   <select 
                     name="toAccountId" 
                     defaultValue={accounts[1]?.id}
-                    className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+                    className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
                   >
                     {accounts.map(a => (
                       <option key={a.id} value={a.id}>{a.name} ({a.type})</option>
@@ -231,7 +231,7 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                       placeholder="500.00" 
                       step="0.01" 
                       min="0.01"
-                      className="bg-input-bg border-0 text-primary text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors" 
+                      className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors" 
                       required 
                     />
                   </div>

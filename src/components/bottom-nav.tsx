@@ -116,14 +116,14 @@ export function BottomNav() {
       desc: "Track informal debts",
       href: "/friends",
       icon: "group",
-      color: "bg-[#FFF3E0] text-[#E65100]",
+      color: "bg-expense-warm-bg text-expense-warm",
     },
     {
       label: "Subscriptions",
       desc: "Fixed monthly bills",
       href: "/recurring",
       icon: "subscriptions",
-      color: "bg-[#E3F2FD] text-[#1976D2]",
+      color: "bg-info-blue-bg text-info-blue",
     },
     {
       label: "Burn Rate Analytics",
@@ -169,7 +169,7 @@ export function BottomNav() {
                     className={`p-3 rounded-xl flex flex-col gap-1.5 border transition-all active:scale-[0.97] ${
                       isActive
                         ? "bg-secondary-container/30 border-secondary ring-1 ring-secondary"
-                        : "bg-[#F8FAFC] border-surface-container hover:bg-surface-container hover:border-primary/30"
+                        : "bg-surface-container-low border-surface-container-high hover:bg-surface-container hover:border-primary/30"
                     }`}
                   >
                     <div className="flex justify-between items-start">

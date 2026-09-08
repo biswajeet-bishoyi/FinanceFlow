@@ -85,7 +85,7 @@ export function AffordabilityCalculator({
             placeholder="0"
             value={purchaseAmountStr}
             onChange={(e) => setPurchaseAmountStr(e.target.value)}
-            className="w-full text-center font-display-currency text-display-currency text-primary py-3 bg-[#F8FAFC] rounded-2xl border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-surface-tint"
+            className="w-full text-center font-display-currency text-display-currency text-primary py-3 bg-input-bg rounded-2xl border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-surface-tint"
             autoFocus
           />
         </div>
@@ -126,7 +126,7 @@ export function AffordabilityCalculator({
         <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">SIMULATION IMPACT</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-[#F8FAFC] p-3.5 rounded-xl border border-surface-container flex flex-col">
+          <div className="bg-surface-container-low p-3.5 rounded-xl border border-surface-container-high flex flex-col">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">Safe-To-Spend / Day</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="font-currency-sm text-currency-sm font-bold text-on-surface text-lg">
@@ -141,7 +141,7 @@ export function AffordabilityCalculator({
             <span className="text-[11px] text-on-surface-variant mt-1">was {formatMoney(safeToSpendToday)}/day</span>
           </div>
 
-          <div className="bg-[#F8FAFC] p-3.5 rounded-xl border border-surface-container flex flex-col">
+          <div className="bg-surface-container-low p-3.5 rounded-xl border border-surface-container-high flex flex-col">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">Balance After Purchase</span>
             <span className={`font-currency-sm text-currency-sm font-bold text-lg mt-1 ${newBalance < 0 ? "text-error" : "text-on-surface"}`}>
               {formatMoney(newBalance)}
@@ -149,7 +149,7 @@ export function AffordabilityCalculator({
             <span className="text-[11px] text-on-surface-variant mt-1">current: {formatMoney(availableBalance)}</span>
           </div>
 
-          <div className="bg-[#F8FAFC] p-3.5 rounded-xl border border-surface-container flex flex-col">
+          <div className="bg-surface-container-low p-3.5 rounded-xl border border-surface-container-high flex flex-col">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">Cycle Runway</span>
             <span className="font-currency-sm text-currency-sm font-bold text-primary text-lg mt-1">
               {daysRemaining} days remaining

@@ -22,7 +22,7 @@ export function GamificationDashboard({ data }: { data: FinancialHealthData }) {
             </div>
           </div>
 
-          <div className="flex flex-col items-center bg-[#F8FAFC] p-3 rounded-xl border border-surface-container">
+          <div className="flex flex-col items-center bg-surface-container-low p-3 rounded-xl border border-surface-container-high">
             <span className="material-symbols-outlined text-warning-amber text-[24px]">local_fire_department</span>
             <span className="font-currency-sm text-sm font-bold text-on-surface">{streakDays} Days</span>
             <span className="font-label-caps text-[9px] text-on-surface-variant uppercase">Streak</span>
@@ -40,7 +40,7 @@ export function GamificationDashboard({ data }: { data: FinancialHealthData }) {
         {/* Score Breakdown Factors */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-surface-container">
           {scoreFactors.map((f) => (
-            <div key={f.name} className="bg-[#F8FAFC] p-2.5 rounded-xl flex flex-col">
+            <div key={f.name} className="bg-surface-container-low p-2.5 rounded-xl flex flex-col border border-surface-container-high">
               <span className="font-label-caps text-[10px] text-on-surface-variant uppercase truncate">{f.name}</span>
               <span className="font-currency-sm text-sm font-bold text-on-surface mt-0.5">
                 {f.score} / {f.maxScore}
@@ -69,7 +69,7 @@ export function GamificationDashboard({ data }: { data: FinancialHealthData }) {
               className={`p-4 rounded-xl border flex items-center gap-3.5 transition-all ${
                 badge.isUnlocked
                   ? "bg-secondary-container/15 border-secondary/30 shadow-xs"
-                  : "bg-[#F8FAFC] border-surface-container opacity-60"
+                  : "bg-surface-container-low border-surface-container-high opacity-60"
               }`}
             >
               <div

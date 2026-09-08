@@ -46,7 +46,7 @@ export function WhatIfSimulator({
         
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {/* Simulated Daily Spend */}
-          <div className="bg-[#F8FAFC] p-4 rounded-xl border border-surface-container flex flex-col">
+          <div className="bg-surface-container-low p-4 rounded-xl border border-surface-container-high flex flex-col">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">New Safe-To-Spend</span>
             <span className="font-currency-sm text-currency-sm text-secondary font-bold text-2xl mt-1">
               {formatMoney(simulatedDaily)}
@@ -62,7 +62,7 @@ export function WhatIfSimulator({
           </div>
 
           {/* Simulated Ending Balance */}
-          <div className="bg-[#F8FAFC] p-4 rounded-xl border border-surface-container flex flex-col">
+          <div className="bg-surface-container-low p-4 rounded-xl border border-surface-container-high flex flex-col">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">Simulated Balance</span>
             <span className={`font-currency-sm text-currency-sm font-bold text-2xl mt-1 ${simulatedBalance < 0 ? "text-error" : "text-on-surface"}`}>
               {formatMoney(simulatedBalance)}
@@ -73,7 +73,7 @@ export function WhatIfSimulator({
           </div>
 
           {/* Runway */}
-          <div className="bg-[#F8FAFC] p-4 rounded-xl border border-surface-container flex flex-col col-span-2 sm:col-span-1">
+          <div className="bg-surface-container-low p-4 rounded-xl border border-surface-container-high flex flex-col col-span-2 sm:col-span-1">
             <span className="font-label-caps text-[11px] text-on-surface-variant uppercase">Cycle Runway</span>
             <span className="font-currency-sm text-currency-sm font-bold text-primary text-2xl mt-1">
               {daysRemaining} days left
@@ -160,7 +160,7 @@ export function WhatIfSimulator({
                 className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
                   expenseCutPercent === pct
                     ? "bg-info-blue text-white border-info-blue shadow-sm"
-                    : "bg-[#F8FAFC] text-on-surface border-surface-container hover:bg-surface-container"
+                    : "bg-surface-container-low text-on-surface border-surface-container-high hover:bg-surface-container"
                 }`}
               >
                 {pct === 0 ? "Normal (0%)" : `${pct}% cut`}
@@ -185,7 +185,7 @@ export function WhatIfSimulator({
               type="button"
               onClick={() => setRecurringAdjustment(-499)}
               className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
-                recurringAdjustment === -499 ? "bg-secondary text-on-secondary" : "bg-[#F8FAFC] border-surface-container"
+                recurringAdjustment === -499 ? "bg-secondary text-on-secondary border-secondary" : "bg-surface-container-low border-surface-container-high text-on-surface hover:bg-surface-container"
               }`}
             >
               Cancel Sub (-₹499)
@@ -194,7 +194,7 @@ export function WhatIfSimulator({
               type="button"
               onClick={() => setRecurringAdjustment(0)}
               className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
-                recurringAdjustment === 0 ? "bg-primary text-on-primary" : "bg-[#F8FAFC] border-surface-container"
+                recurringAdjustment === 0 ? "bg-primary text-on-primary border-primary" : "bg-surface-container-low border-surface-container-high text-on-surface hover:bg-surface-container"
               }`}
             >
               No Change
@@ -203,7 +203,7 @@ export function WhatIfSimulator({
               type="button"
               onClick={() => setRecurringAdjustment(299)}
               className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
-                recurringAdjustment === 299 ? "bg-error text-white" : "bg-[#F8FAFC] border-surface-container"
+                recurringAdjustment === 299 ? "bg-error text-white border-error" : "bg-surface-container-low border-surface-container-high text-on-surface hover:bg-surface-container"
               }`}
             >
               Add Sub (+₹299)

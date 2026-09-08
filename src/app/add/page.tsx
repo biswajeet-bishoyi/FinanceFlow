@@ -54,16 +54,16 @@ export default async function AddExpensePage() {
         }} className="flex flex-col gap-section-gap">
           
           {/* Transaction Type Radio Selector */}
-          <div className="flex bg-input-bg p-1 rounded-xl w-full max-w-xs mx-auto">
+          <div className="flex bg-input-bg p-1 rounded-xl w-full max-w-xs mx-auto border border-surface-container-high">
             <label className="flex-1 text-center cursor-pointer">
               <input type="radio" name="txType" value="expense" defaultChecked className="peer sr-only" />
-              <div className="py-2 rounded-lg text-body-sm font-medium text-on-surface-variant peer-checked:bg-white peer-checked:text-on-background peer-checked:shadow-sm transition-all">
+              <div className="py-2 rounded-lg text-body-sm font-semibold text-on-surface-variant peer-checked:bg-surface-container-lowest peer-checked:text-on-surface peer-checked:shadow-xs border border-transparent peer-checked:border-surface-container-high transition-all">
                 Expense
               </div>
             </label>
             <label className="flex-1 text-center cursor-pointer">
               <input type="radio" name="txType" value="income" className="peer sr-only" />
-              <div className="py-2 rounded-lg text-body-sm font-medium text-on-surface-variant peer-checked:bg-secondary peer-checked:text-on-secondary peer-checked:shadow-sm transition-all">
+              <div className="py-2 rounded-lg text-body-sm font-semibold text-on-surface-variant peer-checked:bg-secondary-container peer-checked:text-on-secondary-container peer-checked:shadow-xs transition-all">
                 Income / Allowance
               </div>
             </label>
@@ -116,7 +116,7 @@ export default async function AddExpensePage() {
                     <span className="material-symbols-outlined">edit_note</span>
                   </div>
                   <input 
-                    className="bg-input-bg border border-transparent text-primary text-body-lg rounded-lg focus:ring-0 focus:border-primary block w-full pl-10 p-3 shadow-[inset_0_0_0_1px_#E2E8F0] transition-colors placeholder:text-outline-variant" 
+                    className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-10 p-3 transition-colors placeholder:text-outline-variant" 
                     id="note" 
                     name="note" 
                     placeholder="e.g. Canteen lunch, Chai, Auto rickshaw" 
@@ -133,7 +133,7 @@ export default async function AddExpensePage() {
                     <span className="material-symbols-outlined">calendar_today</span>
                   </div>
                   <input 
-                    className="bg-input-bg border border-transparent text-primary text-body-lg rounded-lg focus:ring-0 focus:border-primary block w-full pl-10 p-3 shadow-[inset_0_0_0_1px_#E2E8F0] transition-colors" 
+                    className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-lg focus:ring-1 focus:ring-primary block w-full pl-10 p-3 transition-colors" 
                     id="date" 
                     name="date" 
                     type="date" 

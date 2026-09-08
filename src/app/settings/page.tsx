@@ -133,7 +133,7 @@ export default async function SettingsPage() {
                     defaultChecked={currentStartDay === day}
                     className="peer sr-only"
                   />
-                  <div className="py-2.5 px-2 text-center rounded-xl bg-[#F8FAFC] border border-surface-container text-body-sm font-semibold text-on-surface peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary peer-checked:shadow-sm transition-all hover:bg-surface-container">
+                  <div className="py-2.5 px-2 text-center rounded-xl bg-surface-container-low border border-surface-container-high text-body-sm font-semibold text-on-surface peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary peer-checked:shadow-sm transition-all hover:bg-surface-container">
                     Day {day}
                   </div>
                 </label>
@@ -154,7 +154,7 @@ export default async function SettingsPage() {
                 max="28"
                 placeholder="e.g. 1st, 10th"
                 defaultValue={currentStartDay}
-                className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+                className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
               />
             </div>
 
@@ -167,7 +167,7 @@ export default async function SettingsPage() {
                 name="label"
                 defaultValue={cycle.label}
                 placeholder="e.g. September Pocket Money"
-                className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+                className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
                 required
               />
             </div>
@@ -188,7 +188,7 @@ export default async function SettingsPage() {
                   step="0.01"
                   min="0"
                   defaultValue={cycle.expectedAmount ? (cycle.expectedAmount / 100).toString() : ""}
-                  className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors"
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ export default async function SettingsPage() {
                   step="0.01"
                   min="0"
                   defaultValue={cycle.emergencyReserveAmount ? (cycle.emergencyReserveAmount / 100).toString() : ""}
-                  className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors"
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full pl-8 p-3 transition-colors"
                 />
               </div>
             </div>
@@ -224,7 +224,7 @@ export default async function SettingsPage() {
                   type="date"
                   name="startDate"
                   defaultValue={cycleStartDate.toISOString().split("T")[0]}
-                  className="bg-[#F1F5F9] border-0 text-primary text-body-sm rounded-xl focus:ring-1 focus:ring-primary block w-full p-2.5 transition-colors"
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-sm rounded-xl focus:ring-1 focus:ring-primary block w-full p-2.5 transition-colors"
                 />
               </div>
               <div>
@@ -233,7 +233,7 @@ export default async function SettingsPage() {
                   type="date"
                   name="endDate"
                   defaultValue={cycleEndDate.toISOString().split("T")[0]}
-                  className="bg-[#F1F5F9] border-0 text-primary text-body-sm rounded-xl focus:ring-1 focus:ring-primary block w-full p-2.5 transition-colors"
+                  className="bg-input-bg border border-surface-container-high text-on-surface text-body-sm rounded-xl focus:ring-1 focus:ring-primary block w-full p-2.5 transition-colors"
                 />
               </div>
             </div>
@@ -286,7 +286,7 @@ export default async function SettingsPage() {
               type="text"
               name="displayName"
               defaultValue={user.profile?.displayName || "Student"}
-              className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+              className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
               required
             />
           </div>
@@ -298,7 +298,7 @@ export default async function SettingsPage() {
             <select
               name="personalityMode"
               defaultValue={user.profile?.personalityMode || "Friendly"}
-              className="bg-[#F1F5F9] border-0 text-primary text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
+              className="bg-input-bg border border-surface-container-high text-on-surface text-body-lg rounded-xl focus:ring-1 focus:ring-primary block w-full p-3 transition-colors"
             >
               <option value="Friendly">Friendly — Encouraging & supportive</option>
               <option value="Calm">Calm — Quiet & numbers-only</option>
@@ -329,7 +329,7 @@ export default async function SettingsPage() {
           <a
             href="/api/export?format=csv"
             download
-            className="p-3.5 rounded-xl border border-surface-container bg-[#F8FAFC] hover:bg-surface-container text-on-surface font-semibold text-body-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="p-3.5 rounded-xl border border-surface-container-high bg-surface-container-low hover:bg-surface-container text-on-surface font-semibold text-body-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-secondary text-[20px]">table_chart</span>
             Export as CSV (Excel)
@@ -338,7 +338,7 @@ export default async function SettingsPage() {
           <a
             href="/api/export?format=json"
             download
-            className="p-3.5 rounded-xl border border-surface-container bg-[#F8FAFC] hover:bg-surface-container text-on-surface font-semibold text-body-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="p-3.5 rounded-xl border border-surface-container-high bg-surface-container-low hover:bg-surface-container text-on-surface font-semibold text-body-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-primary text-[20px]">data_object</span>
             Export as JSON (Backup)

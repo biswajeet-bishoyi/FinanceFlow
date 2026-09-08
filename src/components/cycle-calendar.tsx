@@ -155,19 +155,19 @@ export function CycleCalendar({
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-surface-container">
-          <div className="bg-[#F8FAFC] p-2.5 rounded-xl text-center">
+          <div className="bg-surface-container-low p-2.5 rounded-xl text-center border border-surface-container-high">
             <span className="font-label-caps text-[10px] text-on-surface-variant block uppercase">Safe Today</span>
             <span className="font-currency-sm text-currency-sm text-secondary font-bold">
               {formatMoney(safeToSpendToday)}
             </span>
           </div>
-          <div className="bg-[#F8FAFC] p-2.5 rounded-xl text-center">
+          <div className="bg-surface-container-low p-2.5 rounded-xl text-center border border-surface-container-high">
             <span className="font-label-caps text-[10px] text-on-surface-variant block uppercase">Spent in Cycle</span>
             <span className="font-currency-sm text-currency-sm text-on-surface font-bold">
               {formatMoney(totalExpensesInCycle)}
             </span>
           </div>
-          <div className="bg-[#F8FAFC] p-2.5 rounded-xl text-center">
+          <div className="bg-surface-container-low p-2.5 rounded-xl text-center border border-surface-container-high">
             <span className="font-label-caps text-[10px] text-on-surface-variant block uppercase">Days Left</span>
             <span className="font-currency-sm text-currency-sm text-primary font-bold">
               {daysRemaining} days
@@ -256,8 +256,8 @@ export function CycleCalendar({
                     : isTodayDate
                     ? "bg-secondary-container/20 border-secondary text-secondary font-bold"
                     : inCycle
-                    ? "bg-[#F8FAFC] border-surface-container text-on-surface hover:border-primary/40 hover:bg-surface-container"
-                    : "bg-white/40 border-transparent text-outline hover:bg-surface-container"
+                    ? "bg-surface-container-low border-surface-container-high text-on-surface hover:border-primary/40 hover:bg-surface-container"
+                    : "bg-surface-container-lowest border-transparent text-outline hover:bg-surface-container"
                 }`}
               >
                 {/* Date Number */}
@@ -344,13 +344,13 @@ export function CycleCalendar({
 
         {/* Day Totals Summary */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#F8FAFC] p-3 rounded-xl">
+          <div className="bg-surface-container-low p-3 rounded-xl border border-surface-container-high">
             <span className="font-label-caps text-[10px] text-on-surface-variant block uppercase">Total Spent</span>
             <span className="font-currency-sm text-currency-sm text-error font-bold text-base">
               {selectedDayTotalExpense > 0 ? `-${formatMoney(selectedDayTotalExpense)}` : "₹0.00"}
             </span>
           </div>
-          <div className="bg-[#F8FAFC] p-3 rounded-xl">
+          <div className="bg-surface-container-low p-3 rounded-xl border border-surface-container-high">
             <span className="font-label-caps text-[10px] text-on-surface-variant block uppercase">Income Received</span>
             <span className="font-currency-sm text-currency-sm text-secondary font-bold text-base">
               {selectedDayTotalIncome > 0 ? `+${formatMoney(selectedDayTotalIncome)}` : "₹0.00"}
@@ -386,19 +386,19 @@ export function CycleCalendar({
           </span>
 
           {selectedDateTransactions.length === 0 ? (
-            <div className="text-center py-6 text-on-surface-variant font-body-sm bg-[#F8FAFC] rounded-xl">
+            <div className="text-center py-6 text-on-surface-variant font-body-sm bg-surface-container-low border border-surface-container-high rounded-xl">
               No transactions recorded on this day.
             </div>
           ) : (
             selectedDateTransactions.map((tx) => (
               <div
                 key={tx.id}
-                className="bg-[#F8FAFC] p-3 rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors"
+                className="bg-surface-container-low border border-surface-container-high p-3 rounded-xl flex items-center justify-between hover:bg-surface-container transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                      tx.type === "income" ? "bg-secondary-container/40 text-secondary" : "bg-[#FFF3E0] text-[#E65100]"
+                      tx.type === "income" ? "bg-secondary-container/40 text-secondary" : "bg-expense-warm-bg text-expense-warm"
                     }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">

@@ -113,14 +113,14 @@ export function SplitSection({ friends }: SplitSectionProps) {
       </div>
 
       {/* Split Method Toggle */}
-      <div className="flex bg-input-bg p-1 rounded-xl">
+      <div className="flex bg-input-bg p-1 rounded-xl border border-surface-container-high">
         <button
           type="button"
           onClick={() => setSplitMethod("equal")}
-          className={`flex-1 py-2 rounded-lg text-body-sm font-medium transition-all ${
+          className={`flex-1 py-2 rounded-lg text-body-sm font-semibold transition-all ${
             splitMethod === "equal"
-              ? "bg-white text-on-background shadow-sm"
-              : "text-on-surface-variant"
+              ? "bg-surface-container-lowest text-on-surface shadow-xs border border-surface-container-high"
+              : "text-on-surface-variant hover:text-on-surface"
           }`}
         >
           Equal Split
@@ -128,10 +128,10 @@ export function SplitSection({ friends }: SplitSectionProps) {
         <button
           type="button"
           onClick={() => setSplitMethod("custom")}
-          className={`flex-1 py-2 rounded-lg text-body-sm font-medium transition-all ${
+          className={`flex-1 py-2 rounded-lg text-body-sm font-semibold transition-all ${
             splitMethod === "custom"
-              ? "bg-white text-on-background shadow-sm"
-              : "text-on-surface-variant"
+              ? "bg-surface-container-lowest text-on-surface shadow-xs border border-surface-container-high"
+              : "text-on-surface-variant hover:text-on-surface"
           }`}
         >
           Custom Amounts
