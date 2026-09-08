@@ -1,65 +1,67 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-secondary-container: #6cf8bb;
-  --color-on-background: #0b1c30;
+  --color-secondary-container: var(--theme-secondary-container);
+  --color-on-background: var(--theme-on-background);
   --color-tertiary-fixed: #e1e0ff;
   --color-on-tertiary-fixed: #07006c;
-  --color-tertiary: #000000;
-  --color-error: #ba1a1a;
+  --color-tertiary: var(--theme-on-background);
+  --color-error: var(--theme-error);
   --color-on-tertiary-fixed-variant: #2f2ebe;
   --color-primary-fixed: #dae2fd;
-  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-lowest: var(--theme-surface-container-lowest);
   --color-tertiary-container: #07006c;
-  --color-on-secondary-container: #00714d;
+  --color-on-secondary-container: var(--theme-on-secondary-container);
   --color-secondary-fixed-dim: #4edea3;
   --color-surface-dim: #cbdbf5;
   --color-on-error-container: #93000a;
   --color-secondary-fixed: #6ffbbe;
-  --color-error-container: #ffdad6;
-  --color-on-surface: #0b1c30;
+  --color-error-container: var(--theme-error-container);
+  --color-on-surface: var(--theme-on-surface);
   --color-inverse-surface: #213145;
   --color-primary-fixed-dim: #bec6e0;
-  --color-secondary: #006c49;
+  --color-secondary: var(--theme-secondary);
   --color-tertiary-fixed-dim: #c0c1ff;
-  --color-surface-variant: #d3e4fe;
-  --color-surface-container-high: #dce9ff;
-  --color-surface-container-low: #eff4ff;
+  --color-surface-variant: var(--theme-surface-container-high);
+  --color-surface-container-high: var(--theme-surface-container-high);
+  --color-surface-container-low: var(--theme-surface-container-low);
   --color-on-error: #ffffff;
   --color-surface-tint: #565e74;
   --color-on-secondary-fixed-variant: #005236;
   --color-on-primary-container: #7c839b;
-  --color-outline-variant: #c6c6cd;
-  --color-surface: #f8f9ff;
-  --color-surface-bright: #f8f9ff;
-  --color-surface-container-highest: #d3e4fe;
+  --color-outline-variant: var(--theme-outline-variant);
+  --color-surface: var(--theme-surface);
+  --color-surface-bright: var(--theme-surface-bright);
+  --color-surface-container-highest: var(--theme-surface-container-highest);
   --color-on-tertiary-container: #7073ff;
-  --color-outline: #76777d;
+  --color-outline: var(--theme-outline);
   --color-on-primary-fixed: #131b2e;
-  --color-primary: #000000;
+  --color-primary: var(--theme-primary);
   --color-on-secondary: #ffffff;
-  --color-primary-container: #131b2e;
-  --color-surface-container: #e5eeff;
-  --color-on-surface-variant: #45464d;
-  --color-on-primary: #ffffff;
-  --color-background: #f8f9ff;
+  --color-primary-container: var(--theme-primary-container);
+  --color-surface-container: var(--theme-surface-container);
+  --color-on-surface-variant: var(--theme-on-surface-variant);
+  --color-on-primary: var(--theme-on-primary);
+  --color-background: var(--theme-background);
   --color-on-tertiary: #ffffff;
   --color-on-primary-fixed-variant: #3f465c;
   --color-on-secondary-fixed: #002113;
   --color-inverse-primary: #bec6e0;
   --color-inverse-on-surface: #eaf1ff;
 
-  /* Semantic design tokens for inline color values previously hardcoded */
-  --color-input-bg: #f1f5f9;
-  --color-input-bg-hover: #f8fafc;
+  /* Semantic design tokens */
+  --color-input-bg: var(--theme-input-bg);
+  --color-input-bg-hover: var(--theme-input-bg-hover);
   --color-warning-amber: #f59e0b;
   --color-expense-warm: #e65100;
-  --color-expense-warm-bg: #fff3e0;
+  --color-expense-warm-bg: var(--theme-expense-warm-bg);
   --color-info-blue: #1976d2;
-  --color-info-blue-bg: #e3f2fd;
+  --color-info-blue-bg: var(--theme-info-blue-bg);
   --color-violet: #512da8;
   --color-violet-bg: #ede7f6;
-  --color-chart-muted: #e5eeff;
+  --color-chart-muted: var(--theme-surface-container);
   --color-friend-avatar-fallback: #006c49;
 
   --spacing-touch-target: 48px;
@@ -75,8 +77,62 @@
   --font-headline-md: "Manrope", sans-serif;
   --font-headline-lg: "Manrope", sans-serif;
   --font-currency-sm: "JetBrains Mono", monospace;
+}
 
-  /* Since standard Tailwind v4 removes custom fontSize object mapping in theme, we just make them utilities or variables. But we can use @utility */
+:root {
+  --theme-background: #f8f9ff;
+  --theme-surface: #ffffff;
+  --theme-surface-bright: #ffffff;
+  --theme-surface-container-lowest: #ffffff;
+  --theme-surface-container-low: #eff4ff;
+  --theme-surface-container: #e5eeff;
+  --theme-surface-container-high: #dce9ff;
+  --theme-surface-container-highest: #d3e4fe;
+  --theme-on-background: #0b1c30;
+  --theme-on-surface: #0b1c30;
+  --theme-on-surface-variant: #45464d;
+  --theme-primary: #0b1c30;
+  --theme-on-primary: #ffffff;
+  --theme-primary-container: #131b2e;
+  --theme-secondary: #006c49;
+  --theme-secondary-container: #6cf8bb;
+  --theme-on-secondary-container: #00714d;
+  --theme-error: #ba1a1a;
+  --theme-error-container: #ffdad6;
+  --theme-input-bg: #f1f5f9;
+  --theme-input-bg-hover: #e2e8f0;
+  --theme-expense-warm-bg: #fff3e0;
+  --theme-info-blue-bg: #e3f2fd;
+  --theme-outline: #76777d;
+  --theme-outline-variant: #c6c6cd;
+}
+
+.dark {
+  --theme-background: #090d16;
+  --theme-surface: #0f172a;
+  --theme-surface-bright: #131b2e;
+  --theme-surface-container-lowest: #111827;
+  --theme-surface-container-low: #151f32;
+  --theme-surface-container: #1e293b;
+  --theme-surface-container-high: #27354a;
+  --theme-surface-container-highest: #334155;
+  --theme-on-background: #f8f9ff;
+  --theme-on-surface: #f1f5f9;
+  --theme-on-surface-variant: #94a3b8;
+  --theme-primary: #f8f9ff;
+  --theme-on-primary: #090d16;
+  --theme-primary-container: #1e293b;
+  --theme-secondary: #34d399;
+  --theme-secondary-container: #064e3b;
+  --theme-on-secondary-container: #6ee7b7;
+  --theme-error: #f87171;
+  --theme-error-container: #450a0a;
+  --theme-input-bg: #172236;
+  --theme-input-bg-hover: #1e2d48;
+  --theme-expense-warm-bg: #431407;
+  --theme-info-blue-bg: #172554;
+  --theme-outline: #64748b;
+  --theme-outline-variant: #334155;
 }
 
 @utility font-body-lg {
@@ -167,4 +223,3 @@
   font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
-

@@ -15,7 +15,7 @@ export function DailyNightRecap({ recap }: { recap: DailyNightRecapResult }) {
   // If daytime and user hasn't clicked preview, show a polite preview pill
   if (!showRecap) {
     return (
-      <div 
+      <div
         id="daily-recap"
         className="bg-surface-container-lowest border border-surface-container-high rounded-2xl p-4 flex items-center justify-between shadow-xs transition-all hover:bg-surface-container-low"
       >
@@ -65,7 +65,7 @@ export function DailyNightRecap({ recap }: { recap: DailyNightRecapResult }) {
   const isSaved = recap.differencePaise >= 0;
 
   return (
-    <section 
+    <section
       id="daily-recap"
       className="relative overflow-hidden rounded-2xl p-5 md:p-6 bg-gradient-to-br from-slate-950 via-[#131738] to-[#0A0D1E] text-slate-100 border border-indigo-500/30 shadow-[0px_10px_30px_rgba(15,23,42,0.25)] flex flex-col gap-4"
     >
@@ -158,20 +158,19 @@ export function DailyNightRecap({ recap }: { recap: DailyNightRecapResult }) {
           <span className="text-[10px] text-slate-400 mt-0.5">Safe runway</span>
         </div>
 
-        <div className={`border rounded-xl p-3 flex flex-col ${
-          recap.status === "zero_spend"
+        <div className={`border rounded-xl p-3 flex flex-col ${recap.status === "zero_spend"
             ? "bg-cyan-950/40 border-cyan-500/30 text-cyan-200"
             : isSaved
-            ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-200"
-            : "bg-amber-950/40 border-amber-500/30 text-amber-200"
-        }`}>
+              ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-200"
+              : "bg-amber-950/40 border-amber-500/30 text-amber-200"
+          }`}>
           <span className="font-label-caps text-[10px] text-slate-400 uppercase tracking-wider">Status</span>
           <span className="font-headline-md text-base md:text-lg font-bold mt-1 truncate">
             {recap.status === "zero_spend"
               ? "Zero Spent"
               : isSaved
-              ? `+${formatMoney(recap.differencePaise)}`
-              : `-${formatMoney(Math.abs(recap.differencePaise))}`}
+                ? `+${formatMoney(recap.differencePaise)}`
+                : `-${formatMoney(Math.abs(recap.differencePaise))}`}
           </span>
           <span className="text-[10px] mt-0.5 opacity-80">
             {isSaved ? "Saved today" : "Over limit"}

@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/format";
 import { updateCycleSettings, updateProfileSettings } from "@/app/actions/cycle";
+import { ThemeSelector } from "@/components/theme-toggle";
 import Link from "next/link";
 
 export default async function SettingsPage() {
@@ -245,6 +246,21 @@ export default async function SettingsPage() {
             Save Cycle Settings
           </button>
         </form>
+      </section>
+
+      {/* Appearance & Dark Mode */}
+      <section className="bg-surface-container-lowest p-6 rounded-2xl shadow-[0px_4px_16px_rgba(15,23,42,0.06)] border border-surface-container-high flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[22px]">palette</span>
+          <h2 className="font-headline-md text-headline-md text-on-surface font-bold">Appearance & Theme</h2>
+        </div>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">
+          Choose between our clean light mode, deep midnight dark mode, or follow your device.
+        </p>
+
+        <div className="pt-1">
+          <ThemeSelector />
+        </div>
       </section>
 
       {/* Profile & Tone Settings */}
