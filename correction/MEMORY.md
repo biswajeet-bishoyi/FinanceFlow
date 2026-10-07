@@ -1,0 +1,1 @@
+- [Project Corrections & Updates Log](correction/CORRECTIONS.md) — Persistent record of corrections, architectural decisions, requirement changes, and important reminders for Student Expense Manager development
