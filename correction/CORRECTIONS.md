@@ -39,6 +39,12 @@ This file tracks all corrections, updates, new requirements, architectural decis
 - **Server Actions**: Added `setCycleResetDay` and updated `updateCycleSettings` in `src/app/actions/cycle.ts` to persist `cycleResetDay` and realign the active cycle boundaries immediately.
 - **Unit Tests**: Added `src/lib/cycle.test.ts` covering boundary math, anchor day adjustments, and month length edge cases.
 
+### 2. Pixelated Bat Flying Loading Animation Buffer (2026-10-07)
+- **Asset**: Generated 6-frame 192x32 pixel art bat sprite SVG in `public/bat-sprite.svg`.
+- **CSS Animation**: Added `@keyframes flap` and `@keyframes batFlapSteps` using `0.4s steps(6) infinite` sprite sheet animation with CSS `mask-image` in `src/app/globals.css`.
+- **Component**: Built `<BatLoader size="xs" | "sm" | "md" | "lg" | "xl" />` (`src/components/ui/bat-loader.tsx`), rendering with `currentColor` to dynamically support light and dark modes.
+- **Replaced Buffer Circles**: Replaced circular spinner / buffer in `SubmitButton`, `CycleResetPrompt`, `HomeQuickActions`, and page loading screen `src/app/loading.tsx`.
+
 ---
 
 ## Architectural Decisions

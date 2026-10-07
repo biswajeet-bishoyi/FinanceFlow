@@ -223,3 +223,84 @@
   font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+
+/* Pixelated Bat Flying Loading Animation */
+@keyframes flap {
+  from {
+    background-position: 0 0;
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+  to {
+    background-position: -192px 0;
+    -webkit-mask-position: -192px 0;
+    mask-position: -192px 0;
+  }
+}
+
+@keyframes batFlapSteps {
+  0% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+    background-position: 0% 0;
+  }
+  16.66% {
+    -webkit-mask-position: 20% 0;
+    mask-position: 20% 0;
+    background-position: 20% 0;
+  }
+  33.33% {
+    -webkit-mask-position: 40% 0;
+    mask-position: 40% 0;
+    background-position: 40% 0;
+  }
+  50% {
+    -webkit-mask-position: 60% 0;
+    mask-position: 60% 0;
+    background-position: 60% 0;
+  }
+  66.66% {
+    -webkit-mask-position: 80% 0;
+    mask-position: 80% 0;
+    background-position: 80% 0;
+  }
+  83.33% {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+    background-position: 100% 0;
+  }
+  100% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+    background-position: 0% 0;
+  }
+}
+
+.bat-loader {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: currentColor;
+  -webkit-mask-image: url("/bat-sprite.svg");
+  mask-image: url("/bat-sprite.svg");
+  -webkit-mask-size: 600% 100%;
+  mask-size: 600% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: batFlapSteps 0.4s step-start infinite;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.bat {
+  display: inline-block;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  background-image: url("/bat-sprite.svg");
+  background-size: 192px 32px;
+  background-repeat: no-repeat;
+  animation: flap 0.4s steps(6) infinite;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+

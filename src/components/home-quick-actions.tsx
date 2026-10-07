@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { addIncome, transferFunds } from "@/app/actions/transaction";
 import { toast } from "sonner";
+import { BatLoader } from "@/components/ui/bat-loader";
 
 type AccountItem = {
   id: string;
@@ -158,7 +159,13 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                   disabled={loading}
                   className="flex-1 py-3 bg-primary text-on-primary font-body-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {loading ? "Adding..." : "Add to Balance"}
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <BatLoader size="xs" /> Adding...
+                    </span>
+                  ) : (
+                    "Add to Balance"
+                  )}
                 </button>
               </div>
             </form>
@@ -250,7 +257,13 @@ export function HomeQuickActions({ accounts }: { accounts: AccountItem[] }) {
                     disabled={loading}
                     className="flex-1 py-3 bg-primary text-on-primary font-body-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
-                    {loading ? "Transferring..." : "Complete Transfer"}
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <BatLoader size="xs" /> Transferring...
+                      </span>
+                    ) : (
+                      "Complete Transfer"
+                    )}
                   </button>
                 </div>
               </form>

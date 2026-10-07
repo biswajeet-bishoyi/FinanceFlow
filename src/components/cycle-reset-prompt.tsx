@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition } from "react";
 import { setCycleResetDay } from "@/app/actions/cycle";
+import { BatLoader } from "@/components/ui/bat-loader";
 
 interface CycleResetPromptProps {
   currentResetDay?: number;
@@ -170,7 +171,7 @@ export function CycleResetPrompt({
             >
               {isPending ? (
                 <>
-                  <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                  <BatLoader size="xs" />
                   Saving...
                 </>
               ) : (

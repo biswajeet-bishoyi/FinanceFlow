@@ -1,7 +1,23 @@
+import { BatLoader } from "@/components/ui/bat-loader";
+
 export default function Loading() {
   return (
-    <main className="px-container-padding py-6 pb-24 flex flex-col gap-section-gap max-w-md mx-auto md:max-w-3xl animate-pulse">
-      {/* Hero Card Skeleton */}
+    <main className="px-container-padding py-6 pb-24 flex flex-col gap-section-gap max-w-md mx-auto md:max-w-3xl">
+      {/* Flying Bat Loading Buffer Indicator */}
+      <div className="flex flex-col items-center justify-center py-6 gap-2.5">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute w-16 h-16 bg-primary/15 rounded-full blur-xl pointer-events-none animate-pulse"></div>
+          <div className="p-3 rounded-2xl bg-surface-container-lowest border border-surface-container-high shadow-xs text-primary flex items-center justify-center">
+            <BatLoader size="lg" />
+          </div>
+        </div>
+        <span className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-widest font-bold">
+          Loading...
+        </span>
+      </div>
+
+      <div className="animate-pulse flex flex-col gap-section-gap">
+        {/* Hero Card Skeleton */}
       <div className="bg-surface-container-lowest rounded-2xl p-6 border border-surface-container-high h-48 flex flex-col justify-between shadow-xs">
         <div className="flex justify-between items-center">
           <div className="h-4 bg-surface-container-high rounded w-32"></div>
@@ -37,6 +53,7 @@ export default function Loading() {
         <div className="h-16 bg-surface-container-lowest rounded-xl border border-surface-container-high"></div>
         <div className="h-16 bg-surface-container-lowest rounded-xl border border-surface-container-high"></div>
         <div className="h-16 bg-surface-container-lowest rounded-xl border border-surface-container-high"></div>
+      </div>
       </div>
     </main>
   );
