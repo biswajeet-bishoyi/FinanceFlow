@@ -3,7 +3,7 @@
 import React from "react";
 
 interface BatLoaderProps {
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
   label?: string;
 }
@@ -14,6 +14,7 @@ const sizeClasses = {
   md: "w-8 h-8",
   lg: "w-12 h-12",
   xl: "w-16 h-16",
+  "2xl": "w-20 h-20",
 };
 
 export function BatLoader({
