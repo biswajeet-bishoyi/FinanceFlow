@@ -3,16 +3,14 @@ import { prisma } from "@/lib/db";
 import { calculateSafeToSpend } from "@/domain/safe-to-spend";
 import { calculateCycleBalance } from "@/domain/cycle-balance";
 import { AffordabilityCalculator } from "@/components/affordability-calculator";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 import Link from "next/link";
 
 export default async function AffordPage() {
   const user = await requireUser(true);
 
-  const [initialCycle, rawAccounts, transactions, goals, recurringExpenses] = await Promise.all([
-    prisma.pocketMoneyCycle.findFirst({
-      where: { userId: user.id, status: "active" },
-      include: { incomes: true },
-    }),
+  const [cycle, rawAccounts, transactions, goals, recurringExpenses] = await Promise.all([
+    getOrRollActiveCycle(user.id, { includeIncomes: true }),
     prisma.account.findMany({
       where: { userId: user.id, archivedAt: null },
     }),
@@ -29,27 +27,6 @@ export default async function AffordPage() {
       },
     }),
   ]);
-
-  let cycle = initialCycle;
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: 0,
-        frequency: "monthly",
-        emergencyReserveAmount: 0,
-        status: "active",
-      },
-      include: { incomes: true },
-    });
-  }
 
   const accounts = rawAccounts.length > 0 ? rawAccounts : [
     await prisma.account.create({

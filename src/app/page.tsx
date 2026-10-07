@@ -11,15 +11,14 @@ import { getCategoryIcon } from "@/lib/icons";
 import { generateSmartInsights } from "@/domain/insights";
 import { calculateDailyNightRecap } from "@/domain/daily-recap";
 import { DailyNightRecap } from "@/components/daily-night-recap";
+import { getOrRollActiveCycle } from "@/lib/cycle";
+import { CycleResetPrompt } from "@/components/cycle-reset-prompt";
 
 export default async function Home() {
   const user = await requireUser(true);
 
-  const [initialCycle, rawAccounts, transactions, goals, allRecurring] = await Promise.all([
-    prisma.pocketMoneyCycle.findFirst({
-      where: { userId: user.id, status: "active" },
-      include: { incomes: true },
-    }),
+  const [cycle, rawAccounts, transactions, goals, allRecurring] = await Promise.all([
+    getOrRollActiveCycle(user.id, { includeIncomes: true }),
     prisma.account.findMany({
       where: { userId: user.id, archivedAt: null },
     }),
@@ -35,27 +34,6 @@ export default async function Home() {
       where: { userId: user.id, active: true },
     }),
   ]);
-
-  let cycle = initialCycle;
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: 0,
-        frequency: "monthly",
-        emergencyReserveAmount: 0,
-        status: "active",
-      },
-      include: { incomes: true },
-    });
-  }
 
   let accounts = rawAccounts;
   if (accounts.length === 0) {
@@ -146,6 +124,12 @@ export default async function Home() {
 
   return (
     <main className="px-container-padding py-6 pb-24 flex flex-col gap-section-gap max-w-md mx-auto md:max-w-3xl">
+      {/* Monthly Cycle Reset Day Prompt / Status */}
+      <CycleResetPrompt 
+        currentResetDay={user.profile?.cycleResetDay ?? 1} 
+        isConfigured={user.profile?.resetDayConfigured ?? false} 
+      />
+
       {/* Total Balance & Safe to Spend Hero Section */}
       <section className="bg-surface-container-lowest rounded-2xl shadow-[0px_8px_24px_rgba(15,23,42,0.06)] p-6 relative overflow-hidden border border-surface-container-high">
         {/* Decorative Glow */}

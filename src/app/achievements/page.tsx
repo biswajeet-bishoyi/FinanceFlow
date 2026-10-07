@@ -4,35 +4,12 @@ import { calculateSafeToSpend } from "@/domain/safe-to-spend";
 import { calculateCycleBalance } from "@/domain/cycle-balance";
 import { calculateGamificationScore } from "@/domain/gamification";
 import { GamificationDashboard } from "@/components/gamification-dashboard";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 import Link from "next/link";
 
 export default async function AchievementsPage() {
   const user = await requireUser(true);
-
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-    include: { incomes: true },
-  });
-
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: 0,
-        frequency: "monthly",
-        emergencyReserveAmount: 0,
-        status: "active",
-      },
-      include: { incomes: true },
-    });
-  }
+  const cycle = await getOrRollActiveCycle(user.id, { includeIncomes: true });
 
   const accounts = await prisma.account.findMany({
     where: { userId: user.id, archivedAt: null },

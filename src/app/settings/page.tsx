@@ -3,37 +3,16 @@ import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/format";
 import { updateCycleSettings, updateProfileSettings } from "@/app/actions/cycle";
 import { ThemeSelector } from "@/components/theme-toggle";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 import Link from "next/link";
 
 export default async function SettingsPage() {
   const user = await requireUser(true);
-
-  let cycle = await prisma.pocketMoneyCycle.findFirst({
-    where: { userId: user.id, status: "active" },
-  });
-
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: 0,
-        frequency: "monthly",
-        emergencyReserveAmount: 0,
-        status: "active",
-      },
-    });
-  }
+  const cycle = await getOrRollActiveCycle(user.id);
 
   const cycleStartDate = new Date(cycle.startDate);
   const cycleEndDate = new Date(cycle.endDate);
-  const currentStartDay = cycleStartDate.getDate();
+  const currentStartDay = user.profile?.cycleResetDay || cycleStartDate.getDate() || 1;
 
   // Calculate days elapsed and remaining
   const today = new Date();

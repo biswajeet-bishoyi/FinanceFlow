@@ -39,6 +39,8 @@ model Profile {
   personalityMode        String    @default("Friendly") // Calm, Friendly, Brutally Honest
   appearanceMode         String    @default("system")
   onboardingCompletedAt  DateTime?
+  cycleResetDay          Int       @default(1)
+  resetDayConfigured     Boolean   @default(false)
 }
 
 model PocketMoneyCycle {

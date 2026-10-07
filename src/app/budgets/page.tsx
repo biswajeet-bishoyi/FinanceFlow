@@ -4,14 +4,13 @@ import { prisma } from "@/lib/db";
 import { createBudget, deleteBudget, createDemoBudget } from "@/app/actions/budget";
 import { getCategoryIcon } from "@/lib/icons";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 
 export default async function BudgetsPage() {
   const user = await requireUser();
 
-  const [initialCycle, allCategories, budgets, allExpenseTransactions] = await Promise.all([
-    prisma.pocketMoneyCycle.findFirst({
-      where: { userId: user.id, status: "active" },
-    }),
+  const [cycle, allCategories, budgets, allExpenseTransactions] = await Promise.all([
+    getOrRollActiveCycle(user.id),
     prisma.category.findMany({
       where: {
         OR: [
@@ -33,25 +32,6 @@ export default async function BudgetsPage() {
       },
     }),
   ]);
-
-  let cycle = initialCycle;
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: 0,
-        frequency: "monthly",
-        status: "active",
-      },
-    });
-  }
 
   const categoryMap = new Map<string, typeof allCategories[0]>();
   for (const cat of allCategories) {

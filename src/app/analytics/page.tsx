@@ -3,6 +3,7 @@ import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/db";
 import { BurnRateChart } from "@/components/charts/burn-rate-chart";
 import { CategoryDonutChart } from "@/components/charts/category-donut-chart";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 import Link from "next/link";
 
 export default async function AnalyticsPage() {
@@ -10,10 +11,7 @@ export default async function AnalyticsPage() {
   
 
   const [cycle, accounts, allTransactions] = await Promise.all([
-    prisma.pocketMoneyCycle.findFirst({
-      where: { userId: user.id, status: "active" },
-      include: { incomes: true },
-    }),
+    getOrRollActiveCycle(user.id, { includeIncomes: true }),
     prisma.account.findMany({
       where: { userId: user.id, archivedAt: null },
     }),

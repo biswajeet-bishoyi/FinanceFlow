@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { calculateCycleBoundaries, formatCycleLabel } from "@/lib/cycle";
 
 export const getAuthUser = cache(async () => {
   const supabase = await createClient();
@@ -25,6 +26,7 @@ const getCurrentDbUserInternal = cache(async (includeProfile: boolean) => {
       authUser.user_metadata?.displayName ||
       authUser.email?.split("@")[0] ||
       "Student";
+    const cycleBoundaries = calculateCycleBoundaries(1, new Date());
     user = await prisma.user.create({
       data: {
         authId: authUser.id,
@@ -34,6 +36,8 @@ const getCurrentDbUserInternal = cache(async (includeProfile: boolean) => {
             currency: "INR",
             locale: "en-IN",
             personalityMode: "Friendly",
+            cycleResetDay: 1,
+            resetDayConfigured: false,
           },
         },
         accounts: {
@@ -55,9 +59,9 @@ const getCurrentDbUserInternal = cache(async (includeProfile: boolean) => {
         },
         cycles: {
           create: {
-            label: "Current Cycle",
-            startDate: new Date(),
-            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            label: formatCycleLabel(cycleBoundaries.startDate, cycleBoundaries.endDate),
+            startDate: cycleBoundaries.startDate,
+            endDate: cycleBoundaries.endDate,
             expectedAmount: 0,
             frequency: "monthly",
             emergencyReserveAmount: 0,

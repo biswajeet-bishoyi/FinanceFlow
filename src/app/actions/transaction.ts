@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { addExpenseSchema, addContributionSchema } from "@/lib/validation";
 import { parseMoneyInput } from "@/lib/format";
+import { getOrRollActiveCycle } from "@/lib/cycle";
 
 export async function addExpense(formData: FormData) {
   const rawData = {
@@ -186,10 +187,8 @@ export async function addIncome(formData: FormData) {
   const user = await requireUser();
 
   // Fetch cycle, account, and category concurrently
-  const [initialCycle, initialAccount, initialCategory] = await Promise.all([
-    prisma.pocketMoneyCycle.findFirst({
-      where: { userId: user.id, status: "active" },
-    }),
+  const [cycle, initialAccount, initialCategory] = await Promise.all([
+    getOrRollActiveCycle(user.id),
     prisma.account.findFirst({
       where: { userId: user.id, archivedAt: null },
     }),
@@ -200,25 +199,6 @@ export async function addIncome(formData: FormData) {
       },
     }),
   ]);
-
-  let cycle = initialCycle;
-  if (!cycle) {
-    const now = new Date();
-    const nextMonth = new Date(now);
-    nextMonth.setMonth(now.getMonth() + 1);
-
-    cycle = await prisma.pocketMoneyCycle.create({
-      data: {
-        userId: user.id,
-        label: "Current Cycle",
-        startDate: now,
-        endDate: nextMonth,
-        expectedAmount: amountInPaise,
-        frequency: "monthly",
-        status: "active",
-      },
-    });
-  }
 
   let account = initialAccount;
   if (!account) {

@@ -58,6 +58,73 @@ export async function updateEmergencyReserve(formData: FormData) {
   }
 }
 
+import { calculateCycleBoundaries, formatCycleLabel } from "@/lib/cycle";
+
+export async function setCycleResetDay(formData: FormData) {
+  try {
+    const user = await requireUser();
+    const dayStr = formData.get("resetDay") as string;
+    const day = Math.min(28, Math.max(1, parseInt(dayStr, 10) || 1));
+
+    await prisma.profile.upsert({
+      where: { userId: user.id },
+      update: {
+        cycleResetDay: day,
+        resetDayConfigured: true,
+      },
+      create: {
+        userId: user.id,
+        displayName: "Student",
+        cycleResetDay: day,
+        resetDayConfigured: true,
+      },
+    });
+
+    const now = new Date();
+    const { startDate, endDate } = calculateCycleBoundaries(day, now);
+    const label = formatCycleLabel(startDate, endDate);
+
+    const activeCycle = await prisma.pocketMoneyCycle.findFirst({
+      where: { userId: user.id, status: "active" },
+    });
+
+    if (activeCycle) {
+      await prisma.pocketMoneyCycle.update({
+        where: { id: activeCycle.id },
+        data: {
+          startDate,
+          endDate,
+          label,
+        },
+      });
+    } else {
+      await prisma.pocketMoneyCycle.create({
+        data: {
+          userId: user.id,
+          label,
+          startDate,
+          endDate,
+          expectedAmount: 0,
+          frequency: "monthly",
+          emergencyReserveAmount: 0,
+          status: "active",
+        },
+      });
+    }
+
+    revalidatePath("/");
+    revalidatePath("/analytics");
+    revalidatePath("/budgets");
+    revalidatePath("/calendar");
+    revalidatePath("/settings");
+    revalidatePath("/what-if");
+    revalidatePath("/afford");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function updateCycleSettings(formData: FormData) {
   try {
     const user = await requireUser();
@@ -65,35 +132,42 @@ export async function updateCycleSettings(formData: FormData) {
     const startDayStr = formData.get("startDay") as string;
     const customStartDateStr = formData.get("startDate") as string;
     const customEndDateStr = formData.get("endDate") as string;
-    const label = (formData.get("label") as string) || "Monthly Cycle";
+    const labelInput = formData.get("label") as string;
     const expectedAmountStr = formData.get("expectedAmount") as string;
     const reserveStr = formData.get("emergencyReserve") as string;
 
     let startDate: Date;
     let endDate: Date;
+    let label = labelInput?.trim();
 
     if (customStartDateStr && customEndDateStr) {
       startDate = new Date(customStartDateStr);
       endDate = new Date(customEndDateStr);
+      if (!label) label = "Monthly Cycle";
     } else if (startDayStr) {
       const day = Math.min(28, Math.max(1, parseInt(startDayStr, 10) || 1));
-      const today = new Date();
-      const currentYear = today.getFullYear();
-      const currentMonth = today.getMonth();
+      
+      // Persist chosen reset day in profile
+      await prisma.profile.upsert({
+        where: { userId: user.id },
+        update: { cycleResetDay: day, resetDayConfigured: true },
+        create: {
+          userId: user.id,
+          displayName: "Student",
+          cycleResetDay: day,
+          resetDayConfigured: true,
+        },
+      });
 
-      // If today is on or after the start day of this month
-      if (today.getDate() >= day) {
-        startDate = new Date(currentYear, currentMonth, day, 0, 0, 0);
-        endDate = new Date(currentYear, currentMonth + 1, day - 1, 23, 59, 59);
-      } else {
-        // We are in the cycle that started last month
-        startDate = new Date(currentYear, currentMonth - 1, day, 0, 0, 0);
-        endDate = new Date(currentYear, currentMonth, day - 1, 23, 59, 59);
-      }
+      const boundaries = calculateCycleBoundaries(day, new Date());
+      startDate = boundaries.startDate;
+      endDate = boundaries.endDate;
+      if (!label) label = formatCycleLabel(startDate, endDate);
     } else {
-      const now = new Date();
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const boundaries = calculateCycleBoundaries(1, new Date());
+      startDate = boundaries.startDate;
+      endDate = boundaries.endDate;
+      if (!label) label = formatCycleLabel(startDate, endDate);
     }
 
     const expectedAmount = expectedAmountStr ? parseMoneyInput(expectedAmountStr) : 0;
@@ -103,7 +177,7 @@ export async function updateCycleSettings(formData: FormData) {
       await prisma.pocketMoneyCycle.update({
         where: { id: cycleId, userId: user.id },
         data: {
-          label: label.trim(),
+          label,
           startDate,
           endDate,
           expectedAmount,
@@ -120,7 +194,7 @@ export async function updateCycleSettings(formData: FormData) {
       await prisma.pocketMoneyCycle.create({
         data: {
           userId: user.id,
-          label: label.trim(),
+          label,
           startDate,
           endDate,
           expectedAmount,
@@ -136,6 +210,8 @@ export async function updateCycleSettings(formData: FormData) {
     revalidatePath("/budgets");
     revalidatePath("/calendar");
     revalidatePath("/settings");
+    revalidatePath("/what-if");
+    revalidatePath("/afford");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
