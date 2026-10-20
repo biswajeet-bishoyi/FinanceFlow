@@ -1,8 +1,9 @@
 import { requireUser } from "@/lib/auth";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/db";
-import { addFriend, settleDebt, recordLending, deleteFriend } from "@/app/actions/friends";
+import { addFriend, recordLending } from "@/app/actions/friends";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { FriendListWithDetails } from "@/components/friend-list-with-details";
 
 export default async function FriendsPage() {
   const user = await requireUser();
@@ -134,75 +135,7 @@ export default async function FriendsPage() {
       {/* Friends List */}
       <section className="flex flex-col gap-stack-gap">
         <h2 className="font-label-caps text-label-caps text-on-surface-variant tracking-wide uppercase">FRIEND BALANCES ({friends.length})</h2>
-        {friends.length === 0 ? (
-          <div className="text-center py-8 bg-surface-container-lowest rounded-xl border border-surface-container-high">
-            <span className="material-symbols-outlined text-outline text-[40px] mb-2 block">group</span>
-            <p className="text-on-surface-variant">No friends added yet. Add your friends below to track splits.</p>
-          </div>
-        ) : (
-          friends.map(friend => {
-            const totalLent = friend.lendingRecords.filter(r => r.direction === "lent").reduce((acc, r) => acc + r.amount, 0);
-            const totalBorrowed = friend.lendingRecords.filter(r => r.direction === "borrowed").reduce((acc, r) => acc + r.amount, 0);
-            const friendNet = totalLent - totalBorrowed;
-
-            return (
-              <div key={friend.id} className="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(15,23,42,0.05)] border border-surface-container-high p-4 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-base shadow-sm" style={{ backgroundColor: friend.avatarColor || 'var(--color-friend-avatar-fallback)' }}>
-                      {friend.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <span className="font-headline-md text-headline-md text-on-surface font-semibold">{friend.name}</span>
-                      <div className="font-body-sm text-body-sm">
-                        {friendNet > 0 && <span className="text-secondary font-bold">Owes you {formatMoney(friendNet)}</span>}
-                        {friendNet < 0 && <span className="text-error font-bold">You owe {formatMoney(Math.abs(friendNet))}</span>}
-                        {friendNet === 0 && <span className="text-on-surface-variant">Settled up</span>}
-                      </div>
-                    </div>
-                  </div>
-
-                  <form action={async (formData: FormData) => {
-                    "use server";
-                    await deleteFriend(formData);
-                  }}>
-                    <input type="hidden" name="personId" value={friend.id} />
-                    <button type="submit" title="Delete friend" className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/20">
-                      <span className="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </form>
-                </div>
-
-                {friend.lendingRecords.length > 0 && (
-                  <div className="border-t border-surface-container pt-3 flex flex-col gap-2">
-                    {friend.lendingRecords.map(record => (
-                      <div key={record.id} className="flex justify-between items-center bg-input-bg-hover p-2.5 rounded-lg">
-                        <div className="min-w-0 flex-1 mr-2">
-                          <p className="font-body-sm text-body-sm text-on-surface font-medium truncate">{record.note || "Split expense"}</p>
-                          <p className="font-label-caps text-[11px] text-on-surface-variant">{new Date(record.occurredAt).toLocaleDateString()}</p>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <span className={`font-currency-sm text-currency-sm font-bold ${record.direction === "lent" ? "text-secondary" : "text-error"}`}>
-                            {record.direction === "lent" ? "+" : "-"}{formatMoney(record.amount)}
-                          </span>
-                          <form action={async (formData: FormData) => {
-                            "use server";
-                            await settleDebt(formData);
-                          }}>
-                            <input type="hidden" name="recordId" value={record.id} />
-                            <button type="submit" className="text-primary text-xs font-semibold hover:bg-surface-container px-2.5 py-1 rounded border border-outline-variant transition-colors">
-                              Settle
-                            </button>
-                          </form>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })
-        )}
+        <FriendListWithDetails friends={friends} />
       </section>
 
       {/* Add Friend */}
