@@ -109,15 +109,7 @@ export function SplitSection({ friends }: SplitSectionProps) {
           onClick={() => {
             if (friends.length === 0) return;
             setEnabled(true);
-            // Automatically pre-select all friends so user doesn't have to select individually
-            setParticipants(
-              friends.map((f) => ({
-                personId: f.id,
-                name: f.name,
-                avatarColor: f.avatarColor,
-                customAmount: "",
-              }))
-            );
+            setParticipants([]);
           }}
           className={`flex items-center gap-2 w-full px-4 py-3 rounded-xl border-2 border-dashed transition-all ${
             friends.length === 0
