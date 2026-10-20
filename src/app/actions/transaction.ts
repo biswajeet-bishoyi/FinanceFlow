@@ -59,7 +59,9 @@ export async function addExpense(formData: FormData) {
     });
   }
 
-  const occurredAt = date ? new Date(date) : new Date();
+  const occurredAt = date
+    ? new Date(date.includes("T") ? date : `${date}T12:00:00`)
+    : new Date();
 
   await prisma.$transaction(async (tx) => {
     const transaction = await tx.transaction.create({
@@ -268,24 +270,43 @@ export async function deleteTransaction(formData: FormData) {
 
   const tx = await prisma.transaction.findFirst({
     where: { id: transactionId, userId: user.id },
-    include: { splitExpense: true }
+    include: {
+      splitExpense: {
+        include: {
+          participants: true,
+        },
+      },
+    },
   });
 
   if (!tx) return { success: false, error: "Transaction not found" };
 
   await prisma.$transaction(async (prismaTx) => {
     if (tx.splitExpense) {
+      const participantIds = tx.splitExpense.participants.map((p) => p.id);
+      if (participantIds.length > 0) {
+        // Delete all lending records created for these split participants
+        await prismaTx.lendingRecord.deleteMany({
+          where: {
+            userId: user.id,
+            splitParticipantId: { in: participantIds },
+          },
+        });
+      }
+
       await prismaTx.splitExpense.deleteMany({
-        where: { transactionId: tx.id }
+        where: { transactionId: tx.id },
       });
     }
+
     await prismaTx.transaction.delete({
-      where: { id: transactionId }
+      where: { id: transactionId },
     });
   });
 
   revalidatePath("/");
   revalidatePath("/transactions");
+  revalidatePath("/friends");
   return { success: true };
 }
 
