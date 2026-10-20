@@ -129,14 +129,11 @@ export function FriendListWithDetails({ friends }: FriendListWithDetailsProps) {
           return (
             <div
               key={friend.id}
-              className="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(15,23,42,0.05)] border border-surface-container-high p-4 flex items-center justify-between hover:border-secondary/50 transition-all group"
+              onClick={() => setSelectedFriendId(friend.id)}
+              className="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(15,23,42,0.05)] border border-surface-container-high p-3.5 sm:p-4 flex items-center justify-between hover:border-secondary/50 active:scale-[0.99] transition-all cursor-pointer group"
             >
-              {/* Clickable info area */}
-              <button
-                type="button"
-                onClick={() => setSelectedFriendId(friend.id)}
-                className="flex items-center gap-3.5 text-left flex-1 min-w-0 cursor-pointer"
-              >
+              {/* Friend Info */}
+              <div className="flex items-center gap-3.5 min-w-0 flex-1 mr-2">
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-base shadow-xs"
                   style={{ backgroundColor: friend.avatarColor || "var(--color-friend-avatar-fallback)" }}
@@ -145,18 +142,13 @@ export function FriendListWithDetails({ friends }: FriendListWithDetailsProps) {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-headline-md text-headline-md text-on-surface font-semibold truncate">
-                      {friend.name}
-                    </span>
-                    {openRecordsCount > 0 && (
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant shrink-0">
-                        {openRecordsCount} {openRecordsCount === 1 ? "expense" : "expenses"}
-                      </span>
-                    )}
-                  </div>
+                  {/* Full Friend Name without badge obstruction */}
+                  <h3 className="font-headline-md text-headline-md text-on-surface font-semibold truncate leading-snug">
+                    {friend.name}
+                  </h3>
 
-                  <div className="font-body-sm text-body-sm mt-0.5">
+                  {/* Subtitle with Balance & Expense Count */}
+                  <div className="flex items-center gap-1.5 font-body-sm text-body-sm mt-0.5 text-xs flex-wrap">
                     {friendNet > 0 && (
                       <span className="text-secondary font-bold">Owes you {formatMoney(friendNet)}</span>
                     )}
@@ -166,31 +158,32 @@ export function FriendListWithDetails({ friends }: FriendListWithDetailsProps) {
                     {friendNet === 0 && (
                       <span className="text-on-surface-variant font-medium">Settled up</span>
                     )}
+                    {openRecordsCount > 0 && (
+                      <span className="text-on-surface-variant/70 shrink-0">
+                        • {openRecordsCount} {openRecordsCount === 1 ? "expense" : "expenses"}
+                      </span>
+                    )}
                   </div>
                 </div>
-              </button>
+              </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1.5 shrink-0 ml-3">
+              {/* Action Buttons: subtle delete + chevron */}
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setSelectedFriendId(friend.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-container hover:bg-secondary/10 hover:text-secondary text-on-surface transition-colors cursor-pointer"
-                  title="View transaction details"
-                >
-                  <span>Details</span>
-                  <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDelete(friend.id, friend.name)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(friend.id, friend.name);
+                  }}
                   disabled={deletingId === friend.id}
                   title="Delete friend"
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/20 transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant/60 hover:text-error hover:bg-error-container/20 transition-colors cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">delete</span>
                 </button>
+                <span className="material-symbols-outlined text-on-surface-variant/40 group-hover:text-secondary group-hover:translate-x-0.5 transition-all text-[22px]">
+                  chevron_right
+                </span>
               </div>
             </div>
           );

@@ -134,14 +134,11 @@ export function SplitSection({ friends }: SplitSectionProps) {
   return (
     <div className="flex flex-col gap-3.5 mt-2">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px] text-secondary">call_split</span>
-          <span className="font-label-caps text-label-caps text-on-surface-variant tracking-wide uppercase font-semibold">
+      <div className="flex items-center justify-between pb-0.5">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="material-symbols-outlined text-[20px] text-secondary shrink-0">call_split</span>
+          <span className="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase font-bold text-xs truncate">
             SPLIT EXPENSE
-          </span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-medium">
-            {participants.length} of {friends.length} selected
           </span>
         </div>
         <button
@@ -151,31 +148,30 @@ export function SplitSection({ friends }: SplitSectionProps) {
             setParticipants([]);
             setSearchQuery("");
           }}
-          className="text-on-surface-variant hover:text-error text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
+          className="text-on-surface-variant hover:text-error text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer py-1 px-2.5 rounded-lg hover:bg-error-container/20 shrink-0"
         >
-          <span className="material-symbols-outlined text-[16px]">close</span>
-          Cancel split
+          <span className="material-symbols-outlined text-[15px]">close</span>
+          Cancel
         </button>
       </div>
 
       {/* Friend Multi-Select Section */}
-      <div className="bg-surface-container-lowest p-3.5 rounded-xl border border-surface-container-high flex flex-col gap-3">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium text-on-surface-variant">
-            Tap friends to include or remove from split:
+      <div className="bg-surface-container-lowest p-3 sm:p-4 rounded-xl border border-surface-container-high flex flex-col gap-2.5">
+        {/* Selected Count & Select All Bar */}
+        <div className="flex items-center justify-between gap-2 pb-1 border-b border-surface-container">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-secondary/15 text-secondary font-semibold shrink-0">
+            {participants.length} of {friends.length} selected
           </span>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              type="button"
-              onClick={isAllSelected ? handleDeselectAll : handleSelectAll}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[15px]">
-                {isAllSelected ? "deselect" : "done_all"}
-              </span>
-              {isAllSelected ? "Deselect All" : "Select All"}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={isAllSelected ? handleDeselectAll : handleSelectAll}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all cursor-pointer shrink-0"
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {isAllSelected ? "deselect" : "done_all"}
+            </span>
+            {isAllSelected ? "Deselect All" : "Select All"}
+          </button>
         </div>
 
         {/* Optional Search if more than 5 friends */}
@@ -189,13 +185,13 @@ export function SplitSection({ friends }: SplitSectionProps) {
               placeholder="Search friends..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-input-bg border border-surface-container-high text-xs rounded-lg block w-full pl-8 pr-3 py-1.5 text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary"
+              className="bg-input-bg border border-surface-container-high text-xs rounded-lg block w-full pl-8 pr-3 py-2 text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary"
             />
           </div>
         )}
 
-        {/* Multi-Select Chips Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-0.5">
+        {/* Multi-Select Friends List (Clean, spacious rows with full names) */}
+        <div className="flex flex-col divide-y divide-surface-container/60 max-h-56 overflow-y-auto pr-0.5">
           {filteredFriends.map((friend) => {
             const isSelected = participants.some((p) => p.personId === friend.id);
             return (
@@ -203,23 +199,23 @@ export function SplitSection({ friends }: SplitSectionProps) {
                 key={friend.id}
                 type="button"
                 onClick={() => toggleParticipant(friend)}
-                className={`flex items-center gap-2.5 p-2 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                className={`flex items-center gap-3 py-2.5 px-2 rounded-lg text-left transition-all cursor-pointer select-none ${
                   isSelected
-                    ? "bg-secondary/10 border-secondary text-on-surface shadow-xs ring-1 ring-secondary/50 font-medium"
-                    : "bg-surface-container-low border-surface-container-high text-on-surface-variant hover:border-outline-variant hover:bg-surface-container"
+                    ? "bg-secondary/10 text-on-surface font-medium"
+                    : "hover:bg-surface-container/40 text-on-surface-variant"
                 }`}
               >
                 <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-xs shadow-xs"
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-xs shadow-xs"
                   style={{ backgroundColor: friend.avatarColor || "var(--color-friend-avatar-fallback)" }}
                 >
                   {friend.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-body-sm font-medium truncate flex-1 text-xs">
+                <span className="text-body-sm font-medium truncate flex-1 text-xs sm:text-sm text-on-surface">
                   {friend.name}
                 </span>
                 <span
-                  className={`material-symbols-outlined text-[18px] shrink-0 transition-colors ${
+                  className={`material-symbols-outlined text-[20px] shrink-0 transition-colors ${
                     isSelected ? "text-secondary font-bold" : "text-on-surface-variant/40"
                   }`}
                 >
